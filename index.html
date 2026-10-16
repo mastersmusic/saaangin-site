@@ -31,8 +31,10 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--ink);color:var(--white);font-family:var(--body);font-size:17px;line-height:1.5;overflow-x:hidden}
+/* No overflow-x on html/body: it propagates to the viewport and breaks anchor scrolling.
+   Nothing on the page overflows sideways — keep it that way instead. */
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--bar-h) + 14px)}
+body{margin:0;background:var(--ink);color:var(--white);font-family:var(--body);font-size:17px;line-height:1.5}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--ground);z-index:10}
 a{color:inherit}
 img{max-width:100%;display:block}
@@ -116,6 +118,7 @@ img{max-width:100%;display:block}
 .ticker__badge{background:var(--pink);color:var(--white);border-radius:999px;padding:.12rem .5rem;font-family:var(--display);font-weight:800;font-size:.68rem;letter-spacing:.12em}
 .ticker__sep{flex:0 0 auto;width:7px;height:7px;transform:rotate(45deg);background:var(--grape)}
 @media(max-width:860px){.ticker__label{display:none}}
+
 /* phones: the hero video sits as a full-bleed 16:9 band so the whole stage and logo are visible, with the words underneath */
 @media(max-width:700px){
   .hero{min-height:0;display:block;padding-block:0 clamp(1.8rem,7vw,2.6rem);background:var(--ink)}
@@ -273,6 +276,18 @@ img{max-width:100%;display:block}
 
 .reveal{opacity:1;transform:none;transition:opacity .6s ease,transform .6s ease}
 .reveal.is-waiting{opacity:0;transform:translateY(18px)}
+/* Small phones: the member card's aspect-ratio was taking its width from its own
+   content height, which pushed it past the screen edge. Shrink the type, drop the tilt. */
+@media(max-width:430px){
+  .card-grid,.card-grid>div{min-width:0}
+  .card-grid .mcard{transform:none;max-width:100%;padding:1rem 1.15rem}
+  .card-grid .mcard .sticker{font-size:1.2rem}
+  .card-grid .mcard__handle{font-size:.6rem;letter-spacing:.14em}
+  .card-grid .mcard__no b{font-size:1.5rem}
+  .card-grid .mcard__name{font-size:1.2rem}
+  .card-grid .mcard__plus{font-size:1rem;padding:.2rem .65rem}
+}
+
 @media(prefers-reduced-motion:reduce){.hero__video{display:none}.hero.is-live .hero__video{opacity:0}.reveal,.reveal.is-waiting{opacity:1;transform:none;transition:none}.btn,.policy__name,.shot::before{transition:none}.ticker__run,.ticker__dot{animation:none}}
 </style>
 
@@ -304,7 +319,7 @@ img{max-width:100%;display:block}
         <li><b id="cdS">0</b><span>sec</span></li>
       </ul>
       <div class="hero__actions">
-        <a class="btn" href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">Request an invite</a>
+        <a class="btn" href="#list">Request an invite</a>
         <span class="price-note">No cover. No ticket link. Guest list only.</span>
       </div>
     </div>
@@ -339,7 +354,7 @@ img{max-width:100%;display:block}
         <div><dt class="data-label">Night</dt><dd id="factNo">Toronto / 001</dd></div>
       </dl>
       <div class="now__actions">
-        <a class="btn" href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">Request an invite</a>
+        <a class="btn" href="#list">Request an invite</a>
         <a class="btn btn--ink" href="#card">Already a member?</a>
       
       </div>
@@ -412,7 +427,7 @@ img{max-width:100%;display:block}
 <section class="section" id="list" aria-labelledby="listTitle">
   <div class="section__head reveal">
     <h2 class="section-title" id="listTitle" style="color:var(--mango)">request an invite</h2>
-    <p class="lede">The room is small and it stays small. Tell us who you are and who you know in it — if there's space, we'll come to you.</p>
+    <p class="lede">The room is small and it stays small. Leave your name and we'll come to you when there's space.</p>
   </div>
   <form class="signup reveal" id="signupForm" name="saaangin-list" method="POST" data-netlify="true" netlify-honeypot="company" novalidate>
     <input type="hidden" name="form-name" value="saaangin-list">
@@ -427,10 +442,6 @@ img{max-width:100%;display:block}
     <div class="signup__field">
       <label class="sr-only" for="ig">Instagram handle</label>
       <input type="text" id="ig" name="instagram" placeholder="@yourhandle" autocomplete="off" required>
-    </div>
-    <div class="signup__field signup__field--wide">
-      <label class="sr-only" for="vouch">Who's vouching for you?</label>
-      <input type="text" id="vouch" name="vouched_by" placeholder="Who's vouching for you?" autocomplete="off" required>
     </div>
     <div class="hp" aria-hidden="true"><label for="company">Company</label><input type="text" id="company" name="company" tabindex="-1" autocomplete="off"></div>
     <button class="btn" type="submit" id="signupBtn">Request an invite</button>
@@ -474,7 +485,7 @@ img{max-width:100%;display:block}
   </div>
 </footer>
 
-<div class="buybar"><a class="btn" href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">Request an invite</a></div>
+<div class="buybar"><a class="btn" href="#list">Request an invite</a></div>
 
 <script>
 (function(){
@@ -515,11 +526,10 @@ img{max-width:100%;display:block}
   form.addEventListener('submit',function(e){
     e.preventDefault();
     var email=document.getElementById('email');
-    var nameEl=document.getElementById('fullname'), ig=document.getElementById('ig'), vouch=document.getElementById('vouch');
+    var nameEl=document.getElementById('fullname'), ig=document.getElementById('ig');
     if(!nameEl.value.trim()){msg.textContent='Your name, please.';nameEl.focus();return;}
     if(!email.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)){msg.textContent='Enter a real email so we can reach you.';email.focus();return;}
     if(!ig.value.trim()){msg.textContent='Your Instagram handle — it’s how we know who you are.';ig.focus();return;}
-    if(!vouch.value.trim()){msg.textContent='Tell us who in the room can vouch for you.';vouch.focus();return;}
     if(document.getElementById('company').value){return;}
     var btn=document.getElementById('signupBtn');
     btn.disabled=true; msg.textContent='Adding you…';
@@ -543,6 +553,22 @@ img{max-width:100%;display:block}
     function done(){copy.textContent='Copied';setTimeout(function(){copy.textContent='Copy handle';},1500);}
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done).catch(sel);}else{sel();}
     function sel(){var r=document.createRange();r.selectNodeContents(document.getElementById('handle'));var s=getSelection();s.removeAllRanges();s.addRange(r);}
+  });
+
+  // In-page links: drive the scroll ourselves rather than relying on native anchor
+  // behaviour, which has been unreliable here across browsers.
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      var id=this.getAttribute('href').slice(1);
+      if(!id) return;
+      var t=document.getElementById(id);
+      if(!t) return;
+      e.preventDefault();
+      var pad=parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop)||0;
+      var top=t.getBoundingClientRect().top+(window.pageYOffset||document.documentElement.scrollTop)-pad;
+      try{ window.scrollTo({top:top,behavior:'smooth'}); }catch(err){ window.scrollTo(0,top); }
+      if(history.replaceState) history.replaceState(null,'','#'+id);
+    });
   });
 
   // Hero video: iOS blocks autoplay in Low Power Mode and after some navigations,
