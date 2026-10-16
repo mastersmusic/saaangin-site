@@ -59,7 +59,13 @@ img{max-width:100%;display:block}
 
 /* ---------- hero ---------- */
 .hero{position:relative;background:var(--ground);color:var(--white);overflow:hidden;min-height:min(86vh,800px);display:flex;align-items:flex-end;padding-block:clamp(3rem,7vw,5.5rem) clamp(2.2rem,5vw,4rem);padding-left:var(--edge);padding-right:var(--edge-r)}
-.hero__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:saturate(.95) contrast(1.05) brightness(.82);z-index:0}
+.hero__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:saturate(.95) contrast(1.05) brightness(.82);z-index:0;pointer-events:none}
+/* iOS/Safari draw a big play glyph over an inline video until it starts — never show it */
+.hero__video::-webkit-media-controls{display:none!important}
+.hero__video::-webkit-media-controls-panel{display:none!important}
+.hero__video::-webkit-media-controls-play-button{display:none!important;-webkit-appearance:none}
+.hero__video::-webkit-media-controls-overlay-play-button{display:none!important;-webkit-appearance:none}
+.hero__video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
 .hero__tint{position:absolute;inset:0;background:var(--ground);mix-blend-mode:multiply;opacity:.35;pointer-events:none}
 .hero__scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,20,36,.15) 0%,rgba(26,20,36,.2) 45%,rgba(26,20,36,.82) 100%);pointer-events:none}
 .hero__inner{width:100%}
@@ -274,7 +280,7 @@ img{max-width:100%;display:block}
   <div class="hero__scrim" aria-hidden="true"></div>
   <div class="hero__inner">
     <div class="hero__left">
-      <p class="data-label hero__cadence">Private karaoke · Every Tuesday · Toronto · Invite only</p>
+      <p class="data-label hero__cadence">Private karaoke · Every Tuesday · Invite only</p>
       <p class="hero__tag">Toronto's premier invite-only karaoke night.</p>
       <h1 class="sr-only">SAAANGIN'</h1>
       <p class="hero__genres"><em>R&amp;B</em><i>//</i><em>Hip hop</em><i>//</i><em>90s pop</em><i>//</i><em>You sing every word</em></p>
@@ -330,7 +336,7 @@ img{max-width:100%;display:block}
         <a class="btn btn--ink" href="#card">Already a member?</a>
       </div>
       <ul class="offer reveal">
-        <li class="is-pick"><p class="data-label">Recommended</p><b>Bottle service</b><small>The best way to do the night — your own table, right by the stage. Reserve through the host.</small></li>
+        <li class="is-pick"><p class="data-label">Recommended</p><b>Bottle service</b><small>The best way to do the night — your own table for the night. Reserve through the host.</small></li>
         <li><b>Hookah</b><small>Available at your table all night.</small></li>
         <li><b>Food</b><small>Full kitchen running while you wait your turn.</small></li>
       </ul>
