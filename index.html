@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="SAAANGIN' — Toronto's premier invite-only karaoke night. Every Tuesday at Rêve Lounge, 456 Richmond St W. No cover, guest list only.">
+<meta name="theme-color" content="#1A1424">
+<link rel="canonical" href="https://saaangin.com/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://saaangin.com/">
+<meta property="og:site_name" content="SAAANGIN'">
+<meta property="og:title" content="SAAANGIN' — Toronto's premier invite-only karaoke night">
+<meta property="og:description" content="Every Tuesday at Rêve Lounge, 456 Richmond St W. No cover. Guest list only.">
+<meta property="og:image" content="https://saaangin.com/assets/hero-poster.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SAAANGIN' — Toronto's premier invite-only karaoke night">
+<meta name="twitter:description" content="Every Tuesday at Rêve Lounge, 456 Richmond St W. No cover. Guest list only.">
+<meta name="twitter:image" content="https://saaangin.com/assets/hero-poster.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%237B3FF2'/%3E%3Cpath fill='%23FFB627' d='M12 4a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V7a3 3 0 0 1 3-3zm-5 8h1.6a3.4 3.4 0 0 0 6.8 0H17a5.1 5.1 0 0 1-4.2 5v2h2.4v1.6H8.8V19h2.4v-2A5.1 5.1 0 0 1 7 12z'/%3E%3C/svg%3E">
+<title>SAAANGIN'</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Manrope:wght@500;700;800&display=swap">
+<style>
+/* Layout: Shuffle Play Rewind's "tape deck" skeleton (full-bleed drenched hero, transport bar, flyer + facts, policy rows, gallery, signup) re-cut for karaoke — the transport is mic / queue / replay — in SAAANGIN' Grape + Mango. Single committed dark world. */
+:root{
+  --grape:#7B3FF2; --mango:#FFB627; --pink:#FF3EA5; --ink:#1A1424; --ink-2:#241A33; --white:#FBFAFD;
+  --ground:var(--grape); --type:var(--mango);
+  --display:'Syne','Manrope',Arial,sans-serif; --body:'Manrope',Arial,sans-serif;
+  --edge:max(20px,env(safe-area-inset-left,0px)); --edge-r:max(20px,env(safe-area-inset-right,0px));
+  --bar-h:66px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--white);font-family:var(--body);font-size:17px;line-height:1.5;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--ground);z-index:10}
+a{color:inherit}
+img{max-width:100%;display:block}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.skip{position:absolute;left:-999px;top:8px;background:var(--mango);color:var(--ink);padding:.6rem 1rem;border-radius:999px;font-weight:800;z-index:50}
+.skip:focus{left:var(--edge)}
+
+/* ---------- type ---------- */
+.data-label{font-family:var(--body);font-weight:800;font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;margin:0}
+.section-title{font-family:var(--display);font-weight:800;font-size:clamp(2.4rem,6vw,4.6rem);line-height:.95;letter-spacing:-.02em;margin:0 0 .5rem;text-wrap:balance}
+.lede{font-size:clamp(1.05rem,1.6vw,1.3rem);max-width:34em;margin:0;color:color-mix(in srgb,var(--white) 82%,var(--grape))}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;background:var(--type);color:var(--ink);font-family:var(--body);font-weight:800;font-size:1rem;padding:.9rem 1.5rem;border-radius:999px;border:0;text-decoration:none;cursor:pointer;min-height:48px;transition:transform .15s ease,box-shadow .15s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.28)}
+.btn:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+.btn--ink{background:var(--ink);color:var(--white);border:2px solid color-mix(in srgb,var(--white) 25%,transparent)}
+.btn--pink{background:var(--pink);color:var(--ink)}
+
+/* ---------- sticker wordmark ---------- */
+.sticker{display:inline-flex;align-items:flex-end;background:var(--white);border:3px solid var(--ink);border-radius:.32em;padding:.14em .3em .08em;transform:rotate(-3deg);font-family:var(--display);font-weight:800;line-height:1;letter-spacing:-.03em;color:var(--ink);box-shadow:0 .25em .7em rgba(0,0,0,.25)}
+.sticker .a2{color:var(--pink);transform:translateY(-.08em)}
+.sticker .a3{color:var(--grape);transform:translateY(-.17em)}
+.sticker .tick{width:.12em;height:.32em;background:var(--pink);border-radius:2px;transform:skewX(-18deg);align-self:flex-start;margin-left:.07em;margin-top:-.12em}
+.sticker span{display:inline-block}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:var(--ground);color:var(--white);overflow:hidden;min-height:min(86vh,800px);display:flex;align-items:flex-end;padding-block:clamp(3rem,7vw,5.5rem) clamp(2.2rem,5vw,4rem);padding-left:var(--edge);padding-right:var(--edge-r)}
+.hero__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:saturate(.95) contrast(1.05) brightness(.82);z-index:0}
+.hero__tint{position:absolute;inset:0;background:var(--ground);mix-blend-mode:multiply;opacity:.35;pointer-events:none}
+.hero__scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,20,36,.15) 0%,rgba(26,20,36,.2) 45%,rgba(26,20,36,.82) 100%);pointer-events:none}
+.hero__inner{width:100%}
+.hero__wash{position:absolute;inset:0;z-index:0;opacity:.3;background:
+  radial-gradient(60% 70% at 85% 10%,color-mix(in srgb,var(--pink) 55%,transparent) 0,transparent 70%),
+  radial-gradient(50% 60% at 10% 90%,color-mix(in srgb,var(--mango) 35%,transparent) 0,transparent 70%);
+  mix-blend-mode:screen;pointer-events:none}
+.scanlines::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 2px,transparent 2px 5px);mix-blend-mode:multiply;pointer-events:none}
+.hero__inner{position:relative;z-index:1;display:grid;gap:2.2rem;max-width:1180px;margin:0 auto}
+@media(min-width:900px){.hero__inner{grid-template-columns:1.15fr .85fr;align-items:end}}
+.hero__cadence{color:var(--mango)}
+.hero__tag{margin:.5rem 0 .9rem;font-family:var(--display);font-weight:800;font-size:clamp(1.8rem,3.6vw,3rem);line-height:1.02;letter-spacing:-.02em;color:var(--white);text-wrap:balance;max-width:13em}
+.hero__mark{margin:.6rem 0 1rem;font-size:clamp(2.8rem,7vw,5.2rem)}
+.hero__genres{margin:0;font-weight:700;font-size:clamp(1rem,1.5vw,1.2rem);color:var(--white)}
+.hero__genres i{font-style:normal;color:var(--mango);margin:0 .35em}
+.hero__when{margin:0 0 1rem;font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,3vw,2.4rem);line-height:1.05;letter-spacing:-.02em}
+.hero__when small{display:block;font-family:var(--body);font-weight:700;font-size:1rem;letter-spacing:0;margin-top:.5rem;color:var(--white);opacity:.85}
+.count{list-style:none;margin:0 0 1.4rem;padding:0;display:flex;flex-wrap:wrap;gap:.9rem 1.3rem}
+.count b{min-width:1.6em}
+@media(max-width:700px){.count{gap:.8rem 1.1rem}}
+.count li{display:flex;flex-direction:column}
+.count b{font-family:var(--display);font-weight:800;font-size:clamp(2rem,4vw,3rem);line-height:1;color:var(--mango);font-variant-numeric:tabular-nums}
+.count span{font-size:.74rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--white);opacity:.8}
+.hero__actions{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center}
+.price-note{font-size:.9rem;font-weight:700;color:var(--white);opacity:.85}
+
+/* ---------- transport bar ---------- */
+.transport{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;height:var(--bar-h);display:flex;align-items:center;justify-content:space-between;gap:1rem;background:var(--ink);border-bottom:1px solid color-mix(in srgb,var(--white) 12%,transparent);padding-left:var(--edge);padding-right:var(--edge-r)}
+.transport__home{display:flex;align-items:center;gap:.6rem;text-decoration:none;font-family:var(--display);font-weight:800;font-size:1.05rem;letter-spacing:-.02em;white-space:nowrap}
+.transport__home svg{width:22px;height:22px;color:var(--mango)}
+/* queue ticker in the transport bar */
+.ticker{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:.8rem;height:42px}
+.ticker__label{flex:0 0 auto;display:flex;align-items:center;gap:.5rem;background:var(--mango);color:var(--ink);border-radius:999px;padding:.35rem .85rem;font-family:var(--display);font-weight:800;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.ticker__dot{width:8px;height:8px;border-radius:50%;background:var(--pink);animation:blink 1.1s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.ticker__track{position:relative;flex:1 1 auto;min-width:0;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 2.5rem,#000 calc(100% - 2.5rem),transparent);mask-image:linear-gradient(90deg,transparent,#000 2.5rem,#000 calc(100% - 2.5rem),transparent)}
+.ticker__run{position:absolute;top:0;left:0;height:100%;display:flex;align-items:center;white-space:nowrap;animation:tickroll var(--tick,70s) linear infinite;will-change:transform}
+.ticker:hover .ticker__run{animation-play-state:paused}
+@keyframes tickroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker__item{display:inline-flex;align-items:center;gap:.6rem;padding:0 1rem}
+.ticker__item .who{font-family:var(--display);font-weight:800;font-size:.98rem;letter-spacing:-.01em}
+.ticker__item .song{font-weight:700;font-size:.92rem;color:color-mix(in srgb,var(--white) 68%,var(--grape))}
+.ticker__item.is-now .who{color:var(--mango)}
+.ticker__badge{background:var(--pink);color:var(--white);border-radius:999px;padding:.12rem .5rem;font-family:var(--display);font-weight:800;font-size:.68rem;letter-spacing:.12em}
+.ticker__sep{flex:0 0 auto;width:7px;height:7px;transform:rotate(45deg);background:var(--grape)}
+@media(max-width:860px){.ticker__label{display:none}}
+/* phones: the hero video sits as a full-bleed 16:9 band so the whole stage and logo are visible, with the words underneath */
+@media(max-width:700px){
+  .hero{min-height:0;display:block;padding-block:0 clamp(1.8rem,7vw,2.6rem);background:var(--ink)}
+  .hero__video{position:relative;display:block;width:calc(100% + var(--edge) + var(--edge-r));margin-left:calc(-1 * var(--edge));height:auto;aspect-ratio:16/9;object-position:center 46%;filter:saturate(.98) contrast(1.04) brightness(.94);margin-bottom:1.6rem}
+  .hero__tint,.hero__wash,.hero__scrim{display:none}
+  .hero__inner{gap:1.6rem}
+  .hero__tag{max-width:none}
+}
+
+/* phones: the bar stacks — mark + CTA on top, ticker full width underneath */
+@media(max-width:700px){
+  .transport{position:static;height:auto;flex-wrap:wrap;padding-block:.65rem;gap:.5rem .8rem}
+  .transport__home span{display:inline}
+  .transport__cta{margin-left:auto;padding:.5rem .9rem;min-height:38px;font-size:.9rem}
+  .ticker{order:3;flex:1 0 100%;height:34px;gap:.6rem}
+  .ticker__label{display:inline-flex;font-size:.68rem;padding:.26rem .6rem;letter-spacing:.08em}
+  .ticker__track{-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 1.5rem),transparent);mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 1.5rem),transparent)}
+  .ticker__item{padding:0 .75rem;gap:.45rem}
+  .ticker__item .who{font-size:.92rem}
+  .ticker__item .song{font-size:.86rem}
+}
+.transport__cta{padding:.6rem 1.1rem;min-height:40px;font-size:.95rem}
+@media(min-width:701px) and (max-width:860px){.transport__home span{display:none}}
+
+/* ---------- sections ---------- */
+.section{padding-block:clamp(3.5rem,8vw,6.5rem);padding-left:var(--edge);padding-right:var(--edge-r)}
+.section > *{max-width:1180px;margin-left:auto;margin-right:auto}
+.section__head{display:grid;gap:.8rem;margin-bottom:2.4rem}
+.now{display:grid;gap:2.4rem}
+@media(min-width:900px){.facts{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem 2.6rem}}
+.flyer{margin:0;aspect-ratio:4/5;max-width:100%;border-radius:18px;overflow:hidden;background:var(--grape);position:relative;display:grid;place-items:center;box-shadow:0 30px 60px rgba(0,0,0,.4)}
+.flyer__art{position:absolute;inset:0;background:
+  radial-gradient(45% 40% at 70% 20%,color-mix(in srgb,var(--pink) 70%,transparent),transparent 70%),
+  radial-gradient(50% 45% at 20% 85%,color-mix(in srgb,var(--mango) 45%,transparent),transparent 70%)}
+.flyer__inner{position:relative;z-index:1;text-align:center;display:grid;gap:1.1rem;padding:2rem}
+.flyer__inner .sticker{font-size:clamp(2.2rem,6vw,3.4rem)}
+.flyer__inner .data-label{color:var(--ink)}
+.flyer__inner .big{font-family:var(--display);font-weight:800;font-size:clamp(1.3rem,3vw,2rem);line-height:1.05;color:var(--white)}
+.flyer__badge{position:absolute;right:-8px;top:18px;background:var(--mango);color:var(--ink);font-family:var(--display);font-weight:800;font-size:1rem;padding:.5rem .9rem;border-radius:999px;transform:rotate(8deg);z-index:2}
+.facts{display:grid;gap:1.2rem;margin:1.6rem 0 2rem}
+.facts > div{border-top:1px solid color-mix(in srgb,var(--white) 15%,transparent);padding-top:1rem;display:grid;gap:.25rem}
+.facts dt{color:var(--mango)}
+.facts dd{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(1.25rem,2.4vw,1.8rem);letter-spacing:-.02em}
+.facts dd small{display:block;font-family:var(--body);font-weight:500;font-size:.95rem;color:color-mix(in srgb,var(--white) 70%,var(--grape));letter-spacing:0;margin-top:.2rem}
+.facts a{text-decoration:underline;text-decoration-color:var(--pink);text-underline-offset:4px}
+.now__actions{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center}
+
+/* policy rows */
+.policy{list-style:none;margin:0 0 2rem;padding:0;max-width:1180px}
+.policy li{border-top:1px solid color-mix(in srgb,var(--white) 15%,transparent);padding:1.1rem 0;display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+.policy li:last-child{border-bottom:1px solid color-mix(in srgb,var(--white) 15%,transparent)}
+.policy__name{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,4vw,3rem);letter-spacing:-.02em;transition:transform .2s ease,color .2s ease}
+.policy li:hover .policy__name{transform:translateX(.3em);color:var(--mango)}
+.policy__note{font-size:.95rem;color:color-mix(in srgb,var(--white) 70%,var(--grape));text-align:right;max-width:20em}
+.dj-line{display:flex;align-items:baseline;gap:1rem;margin:0}
+.dj-line b{font-family:var(--display);font-weight:800;font-size:1.6rem}
+
+/* steps */
+.steps{display:grid;gap:1.6rem;list-style:none;margin:0;padding:0;counter-reset:step}
+@media(min-width:720px){.steps{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.steps li{border-top:4px solid var(--grape);padding-top:1rem;display:grid;gap:.5rem;min-width:0}
+.steps li:nth-child(3),.steps li:nth-child(4){border-color:var(--pink)}
+.steps li:nth-child(5){border-color:var(--mango)}
+.steps b{font-family:var(--display);font-weight:800;font-size:2.4rem;line-height:1;color:var(--grape)}
+.steps li:nth-child(3) b,.steps li:nth-child(4) b{color:var(--pink)}
+.steps li:nth-child(5) b{color:var(--mango)}
+.steps h3{margin:0;font-size:1.15rem;font-weight:800}
+.steps p{margin:0;font-size:.98rem;color:color-mix(in srgb,var(--white) 72%,var(--grape))}
+
+/* table service */
+.offer{list-style:none;margin:2.2rem 0 0;padding:0;display:grid;gap:1rem}
+@media(min-width:720px){.offer{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.offer li{background:var(--ink-2);border-radius:18px;border-top:4px solid var(--grape);padding:1.2rem 1.3rem;display:grid;gap:.3rem;min-width:0}
+.offer li.is-pick{border-top-color:var(--mango)}
+.offer .data-label{color:var(--mango)}
+.offer b{font-family:var(--display);font-weight:800;font-size:1.35rem;letter-spacing:-.01em}
+.offer small{font-size:.94rem;color:color-mix(in srgb,var(--white) 72%,var(--grape))}
+
+/* grape band — sections alternate dark / purple down the page */
+.band{background:var(--ground);color:var(--white)}
+.band .section-title{color:var(--white)}
+.band .lede{color:var(--ink)}
+.band .steps li,.band .steps li:nth-child(3),.band .steps li:nth-child(4){border-color:color-mix(in srgb,var(--white) 70%,transparent)}
+.band .steps li:nth-child(5){border-color:var(--mango)}
+.band .steps b,.band .steps li:nth-child(3) b,.band .steps li:nth-child(4) b{color:var(--white)}
+.band .steps li:nth-child(5) b{color:var(--mango)}
+.band .steps p,.band .perks li,.band .facts dd small,.band .fineprint{color:color-mix(in srgb,var(--white) 88%,var(--ink))}
+.band .facts dt,.band .form-msg,.band .facts a{color:var(--white)}
+.band .facts > div{border-top-color:color-mix(in srgb,var(--white) 35%,transparent)}
+.band .signup input{background:color-mix(in srgb,var(--ink) 80%,var(--grape));border-color:color-mix(in srgb,var(--white) 40%,transparent)}
+.band .btn--ink{border-color:color-mix(in srgb,var(--white) 45%,transparent)}
+
+/* card */
+.card-grid{display:grid;gap:2.2rem;align-items:center}
+@media(min-width:900px){.card-grid{grid-template-columns:1fr 1fr}}
+.mcard{aspect-ratio:85.6/54;max-width:460px;width:100%;border-radius:22px;background:var(--grape);position:relative;padding:1.4rem 1.6rem;display:grid;grid-template-rows:auto 1fr auto;box-shadow:0 30px 60px rgba(0,0,0,.45);transform:rotate(-4deg)}
+.band .mcard{background:var(--ink);border:2px solid color-mix(in srgb,var(--white) 20%,transparent)}
+.mcard .sticker{font-size:1.6rem;transform:rotate(-3deg)}
+.mcard__top{display:flex;justify-content:space-between;align-items:center}
+.mcard__handle{font-size:.72rem;font-weight:800;letter-spacing:.2em;color:var(--white)}
+.mcard__no{text-align:right;align-self:center}
+.mcard__no .data-label{color:var(--mango)}
+.mcard__no b{font-family:var(--display);font-weight:800;font-size:2rem;color:var(--mango)}
+.mcard__bottom{display:flex;justify-content:space-between;align-items:flex-end}
+.mcard__name{font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1}
+.mcard__plus{background:var(--mango);color:var(--ink);font-family:var(--display);font-weight:800;font-size:1.3rem;padding:.3rem .9rem;border-radius:999px}
+.perks{list-style:none;margin:1.4rem 0 1.8rem;padding:0;display:grid;gap:.7rem}
+.perks li{display:flex;gap:.8rem;align-items:flex-start;font-weight:700}
+.perks li::before{content:"";width:12px;height:12px;background:var(--mango);transform:rotate(45deg);flex:0 0 auto;margin-top:.45em}
+
+/* gallery */
+.gallery{display:grid;gap:.8rem;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:700px){.gallery{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1000px){.gallery{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.shot{margin:0;aspect-ratio:4/5;max-width:100%;border-radius:14px;overflow:hidden;position:relative;background:var(--ink-2);display:grid;place-items:end start;padding:1rem;color:var(--white);text-decoration:none}
+.shot::before{content:"";position:absolute;inset:0;background:var(--g,linear-gradient(160deg,var(--grape),var(--ink)));transition:transform .4s ease}
+.shot:hover::before{transform:scale(1.06)}
+.shot span{position:relative;font-family:var(--display);font-weight:800;font-size:1.05rem;line-height:1.1;text-wrap:balance}
+.shot--more{background:var(--mango);color:var(--ink);place-items:center;text-align:center}
+.shot--more::before{display:none}
+.shot--more svg{width:28px;height:28px;margin-top:.6rem}
+
+/* rules */
+.rules{display:grid;gap:1rem;list-style:none;margin:0;padding:0}
+@media(min-width:720px){.rules{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.rules li{background:var(--ink-2);border-radius:18px;border-top:4px solid var(--grape);padding:1.5rem;display:grid;gap:.5rem;min-width:0}
+.rules li:nth-child(2){border-top-color:var(--mango)}
+.rules h3{margin:0;font-family:var(--display);font-weight:800;font-size:1.5rem;letter-spacing:-.02em}
+.rules p{margin:0;color:color-mix(in srgb,var(--white) 72%,var(--grape))}
+
+/* signup */
+.signup{display:flex;flex-wrap:wrap;gap:.8rem;max-width:620px}
+.signup__field{flex:1 1 260px;min-width:0}
+.signup input{width:100%;min-height:48px;border-radius:999px;border:2px solid color-mix(in srgb,var(--white) 25%,transparent);background:var(--ink-2);color:var(--white);padding:.8rem 1.2rem;font:inherit;font-weight:700}
+.hp{position:absolute;left:-9999px}
+.form-msg{min-height:1.4em;margin:.8rem 0 0;font-weight:800;color:var(--mango)}
+.fineprint{font-size:.9rem;color:color-mix(in srgb,var(--white) 65%,var(--grape));margin:.4rem 0 0;max-width:40em}
+.copyrow{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:1.4rem}
+.copyrow code{font-family:var(--body);font-weight:800;background:var(--ink-2);padding:.5rem .9rem;border-radius:999px}
+
+/* footer */
+.footer{background:var(--ink);border-top:1px solid color-mix(in srgb,var(--white) 12%,transparent);padding-block:3.5rem 2rem;padding-left:var(--edge);padding-right:var(--edge-r)}
+.footer__grid{max-width:1180px;margin:0 auto;display:grid;gap:2.4rem}
+@media(min-width:800px){.footer__grid{grid-template-columns:1.2fr 1fr 1fr}}
+.footer h2{margin:0 0 .8rem;font-family:var(--display);font-weight:800;font-size:clamp(2.4rem,5vw,3.6rem);line-height:.95;letter-spacing:-.02em;color:var(--mango)}
+.footer p{margin:0 0 1.2rem}
+.footer__legal{max-width:1180px;margin:3rem auto 0;display:flex;flex-wrap:wrap;justify-content:space-between;gap:.6rem;font-size:.85rem;color:color-mix(in srgb,var(--white) 60%,var(--grape));border-top:1px solid color-mix(in srgb,var(--white) 12%,transparent);padding-top:1.2rem}
+.footer__sponsor{font-family:var(--display);font-weight:800;font-size:1.2rem}
+
+/* mobile sticky */
+.buybar{display:none}
+@media(max-width:720px){.buybar{display:block;position:fixed;left:0;right:0;bottom:0;z-index:9;padding:.7rem var(--edge-r) calc(.7rem + env(safe-area-inset-bottom,0px)) var(--edge);background:color-mix(in srgb,var(--ink) 88%,transparent);backdrop-filter:blur(10px);border-top:1px solid color-mix(in srgb,var(--white) 12%,transparent)}.buybar .btn{width:100%}.footer{padding-bottom:6.5rem}}
+
+.reveal{opacity:1;transform:none;transition:opacity .6s ease,transform .6s ease}
+.reveal.is-waiting{opacity:0;transform:translateY(18px)}
+@media(prefers-reduced-motion:reduce){.hero__video{display:none}.reveal,.reveal.is-waiting{opacity:1;transform:none;transition:none}.btn,.policy__name,.shot::before{transition:none}.ticker__run,.ticker__dot{animation:none}}
+</style>
+
+<a class="skip" href="#sing">Skip to the night</a>
+
+<!-- ============ HERO ============ -->
+<header class="hero scanlines" id="top">
+  <video class="hero__video" id="heroVid" src="hero.mp4" poster="hero-poster.jpg" autoplay muted defaultMuted loop playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
+  <div class="hero__tint" aria-hidden="true"></div>
+  <div class="hero__wash" aria-hidden="true"></div>
+  <div class="hero__scrim" aria-hidden="true"></div>
+  <div class="hero__inner">
+    <div class="hero__left">
+      <p class="data-label hero__cadence">Private karaoke · Every Tuesday · Toronto · Invite only</p>
+      <p class="hero__tag">Toronto's premier invite-only karaoke night.</p>
+      <h1 class="sr-only">SAAANGIN'</h1>
+      <p class="hero__genres"><em>R&amp;B</em><i>//</i><em>Hip hop</em><i>//</i><em>90s pop</em><i>//</i><em>You sing every word</em></p>
+    </div>
+    <div class="hero__right">
+      <p class="hero__when">
+        <span id="heroDate">Tuesday</span>
+        <small><span id="heroVenue">Rêve Lounge</span> · 456 Richmond St W · Doors <span id="heroDoors">9PM</span></small>
+      </p>
+      <ul class="count" id="countdown" aria-label="Countdown to the next night">
+        <li><b id="cdD">0</b><span>days</span></li>
+        <li><b id="cdH">0</b><span>hrs</span></li>
+        <li><b id="cdM">0</b><span>min</span></li>
+        <li><b id="cdS">0</b><span>sec</span></li>
+      </ul>
+      <div class="hero__actions">
+        <a class="btn" href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">Request an invite</a>
+        <span class="price-note">No cover. No ticket link. Guest list only.</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ TRANSPORT ============ -->
+<nav class="transport" aria-label="Primary">
+  <a class="transport__home" href="#top">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4zm-6 10h2a4 4 0 0 0 8 0h2a6 6 0 0 1-5 5.9V20h3v2H8v-2h3v-2.1A6 6 0 0 1 6 12z"/></svg>
+    <span>saaangin'</span>
+  </a>
+  <div class="ticker" aria-label="Tonight's queue">
+    <span class="ticker__label"><span class="ticker__dot" aria-hidden="true"></span>up next</span>
+    <div class="ticker__track"><div class="ticker__run" id="tickerRun" aria-hidden="true"></div></div>
+  </div>
+  <a class="btn transport__cta" href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">Get on the list</a>
+</nav>
+
+<main>
+
+<!-- ============ THIS WEEK ============ -->
+<section class="section" id="sing" aria-labelledby="singTitle">
+  <div class="now">
+    <div class="reveal">
+      <h2 class="section-title" id="singTitle" style="color:var(--mango)">launch night</h2>
+      <dl class="facts">
+        <div><dt class="data-label">Date</dt><dd id="factDate">Tuesday</dd></div>
+        <div><dt class="data-label">Where</dt><dd>Rêve Lounge<small><a href="https://www.google.com/maps/search/?api=1&amp;query=R%C3%AAve%20Lounge%2C%20456%20Richmond%20St%20W%2C%20Toronto" target="_blank" rel="noopener">456 Richmond St W, Toronto</a> · opens in Google Maps</small></dd></div>
+        <div><dt class="data-label">Doors</dt><dd>9PM<small>First mic at 9:30 · last call 1AM</small></dd></div>
+        <div><dt class="data-label">Host</dt><dd id="factHost">Your host for the night<small>Runs the queue, keeps the room loud</small></dd></div>
+        <div><dt class="data-label">Night</dt><dd id="factNo">Toronto / 001</dd></div>
+      </dl>
+      <div class="now__actions">
+        <a class="btn" href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">Request an invite</a>
+        <a class="btn btn--ink" href="#card">Already a member?</a>
+      </div>
+      <ul class="offer reveal">
+        <li class="is-pick"><p class="data-label">Recommended</p><b>Bottle service</b><small>The best way to do the night — your own table, right by the stage. Reserve through the host.</small></li>
+        <li><b>Hookah</b><small>Available at your table all night.</small></li>
+        <li><b>Food</b><small>Full kitchen running while you wait your turn.</small></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW A NIGHT WORKS ============ -->
+<section class="section band scanlines" id="queue" aria-labelledby="queueTitle" style="position:relative">
+  <div class="section__head reveal">
+    <h2 class="section-title" id="queueTitle">from the invite to the purple mic</h2>
+    <p class="lede">No sign-up sheet at the bar. Scan, pick your song, watch the screen.</p>
+  </div>
+  <ol class="steps reveal">
+    <li><b>1</b><h3>Get the invite</h3><p>Personal, from the host. The address comes with it.</p></li>
+    <li><b>2</b><h3>Scan to sing</h3><p>The QR on the screen puts your name and song in the queue.</p></li>
+    <li><b>3</b><h3>Watch the screen</h3><p>"Now saaangin'" and "Who's saaangin' next?" tell you when you're up.</p></li>
+    <li><b>4</b><h3>Take the mic</h3><p>The purple one. The room sings every word with you.</p></li>
+    <li><b>5</b><h3>Get your number</h3><p>Every night is logged. Toronto / 001, 002, 003.</p></li>
+  </ol>
+</section>
+
+<!-- ============ HOUSE RULES ============ -->
+<section class="section" id="rules" aria-labelledby="rulesTitle">
+  <div class="section__head reveal">
+    <h2 class="section-title" id="rulesTitle">house rules</h2>
+    <p class="lede">Only two.</p>
+  </div>
+  <ul class="rules reveal">
+    <li><h3>No judgment</h3><p>No scores, no rankings, no side-eye. Off-key counts. Forgetting the second verse counts. Everybody in this room is on your side.</p></li>
+    <li><h3>Sing your favourites</h3><p>We're here to have a good time and perform the songs we love. Pick the one you know every word to and let the room sing it with you.</p></li>
+  </ul>
+</section>
+
+<!-- ============ THE CARD ============ -->
+<section class="section band" id="card" aria-labelledby="cardTitle">
+  <div class="card-grid">
+    <div class="reveal">
+      <h2 class="section-title" id="cardTitle">the card</h2>
+      <p class="lede">Entry every week, no list needed. Five guests, arriving with you.</p>
+      <ul class="perks">
+        <li>Walk in any Tuesday with the card. No list check.</li>
+        <li>Up to five guests per night, arriving with you.</li>
+        <li>Your number stays yours. Founding members get the black card.</li>
+        <li>Valid for the named member only. Photo ID. The house may revoke it.</li>
+      </ul>
+      <a class="btn" href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">Ask about membership</a>
+    </div>
+    <div class="reveal" style="display:grid;place-items:center">
+      <div class="mcard" role="img" aria-label="SAAANGIN' member card, number 001, member name Jordan M., plus five guests">
+        <div class="mcard__top">
+          <span class="sticker" aria-hidden="true"><span>SA</span><span class="a2">A</span><span class="a3">A</span><span>NGIN</span><span class="tick"></span></span>
+          <span class="mcard__handle">@WESAAANGIN</span>
+        </div>
+        <div class="mcard__no"><p class="data-label">Member</p><b>No. 001</b></div>
+        <div class="mcard__bottom">
+          <div><p class="data-label" style="color:var(--white);opacity:.8">Member name</p><div class="mcard__name">Jordan M.</div></div>
+          <span class="mcard__plus">+5</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NEXT ONE ============ -->
+<section class="section" id="list" aria-labelledby="listTitle">
+  <div class="section__head reveal">
+    <h2 class="section-title" id="listTitle" style="color:var(--mango)">next one</h2>
+    <p class="lede">Every Tuesday. Leave an email and you'll get the night's number and the invite link before anyone posts it.</p>
+  </div>
+  <form class="signup reveal" id="signupForm" novalidate>
+    <div class="signup__field">
+      <label class="sr-only" for="email">Email address</label>
+      <input type="email" id="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+    </div>
+    <div class="hp" aria-hidden="true"><label for="company">Company</label><input type="text" id="company" name="company" tabindex="-1" autocomplete="off"></div>
+    <button class="btn" type="submit" id="signupBtn">Keep me posted</button>
+  </form>
+  <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
+  <p class="fineprint">One email a week with the date and the invite. Nothing else, and you can leave any time.</p>
+  <div class="copyrow">
+    <span class="data-label" style="color:var(--mango)">Or DM</span>
+    <code id="handle">@wesaaangin</code>
+    <button class="btn btn--ink" type="button" id="copyHandle" style="min-height:40px;padding:.5rem 1rem">Copy handle</button>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="footer__grid">
+    <div>
+      <h2>saaangin'</h2>
+      <p class="data-label" style="color:var(--grape)">Every Tuesday · Toronto · Invite only</p>
+    </div>
+    <div>
+      <p class="data-label" style="color:var(--mango);margin-bottom:.6rem">The room</p>
+      <p>Rêve Lounge<br><a href="https://www.google.com/maps/search/?api=1&amp;query=R%C3%AAve%20Lounge%2C%20456%20Richmond%20St%20W%2C%20Toronto" target="_blank" rel="noopener">456 Richmond St W, Toronto</a></p>
+      <p class="data-label" style="color:var(--mango);margin-bottom:.6rem">Follow</p>
+      <p><a href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">Instagram @wesaaangin</a></p>
+      <p class="data-label" style="color:var(--mango);margin-bottom:.6rem">Contact</p>
+      <p>DM @wesaaangin on Instagram</p>
+    </div>
+    <div>
+      <p class="data-label" style="color:var(--mango);margin-bottom:.6rem">Powered by</p>
+      <p class="footer__sponsor">LUME Cocktail</p>
+      <p class="data-label" style="color:var(--mango);margin-bottom:.6rem">The slogan</p>
+      <p style="font-family:var(--display);font-weight:800;font-size:1.3rem">Not singing. Saaangin'.</p>
+    </div>
+  </div>
+  <div class="footer__legal">
+    <span>© <span id="year">2026</span> SAAANGIN'</span>
+    <span>19+ with valid ID</span>
+  </div>
+</footer>
+
+<div class="buybar"><a class="btn" href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">Request an invite</a></div>
+
+<script>
+(function(){
+  // Next Tuesday, 9PM Toronto, and the night number (counting from 001).
+  var FIRST_NIGHT = new Date(2026,9,27,21,0,0); // Tue Oct 27 2026 9PM — launch night
+  var DOORS_HOUR = 21;
+  function nextNight(){
+    var now=new Date(), d=new Date(now);
+    d.setHours(DOORS_HOUR,0,0,0);
+    var diff=(2-d.getDay()+7)%7; // 2 = Tuesday
+    d.setDate(d.getDate()+diff);
+    if(d-now < -4*3600*1000) d.setDate(d.getDate()+7); // keep tonight's night until 1AM
+    if(d<FIRST_NIGHT) d=new Date(FIRST_NIGHT);
+    return d;
+  }
+  var night=nextNight();
+  var weeks=Math.max(0,Math.round((night-FIRST_NIGHT)/(7*24*3600*1000)));
+  var no='Toronto / '+String(weeks+1).padStart(3,'0');
+  var fmt=night.toLocaleDateString('en-CA',{weekday:'long',month:'long',day:'numeric'});
+  ['heroDate','factDate','flyerDate'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=fmt;});
+  ['flyerNo','factNo'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=no;});
+  // Before the first night it's the launch; after that, it's just this week's night.
+  var st=document.getElementById('singTitle');
+  if(st) st.textContent = (night.getTime()===FIRST_NIGHT.getTime()) ? 'launch night' : 'this week';
+  function tick(){
+    var ms=Math.max(0,night-new Date());
+    var s=Math.floor(ms/1000), m=Math.floor(s/60), h=Math.floor(m/60), d=Math.floor(h/24);
+    document.getElementById('cdD').textContent=d;
+    document.getElementById('cdH').textContent=h%24;
+    document.getElementById('cdM').textContent=m%60;
+    var es=document.getElementById('cdS'); if(es) es.textContent=('0'+(s%60)).slice(-2);
+  }
+  tick(); setInterval(tick,1000);
+  document.getElementById('year').textContent=new Date().getFullYear();
+
+  // Signup: no backend here yet — show the handle to DM instead of pretending.
+  var form=document.getElementById('signupForm'), msg=document.getElementById('formMsg');
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var email=document.getElementById('email');
+    if(!email.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)){msg.textContent='Enter a real email so we can reach you.';email.focus();return;}
+    if(document.getElementById('company').value){return;}
+    msg.textContent="You're on the list. Watch for Tuesday's invite.";
+    email.value='';
+  });
+
+  // Copy handle
+  var copy=document.getElementById('copyHandle');
+  copy.addEventListener('click',function(){
+    var t='@wesaaangin';
+    function done(){copy.textContent='Copied';setTimeout(function(){copy.textContent='Copy handle';},1500);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done).catch(sel);}else{sel();}
+    function sel(){var r=document.createRange();r.selectNodeContents(document.getElementById('handle'));var s=getSelection();s.removeAllRanges();s.addRange(r);}
+  });
+
+  // Hero video: iOS blocks autoplay in Low Power Mode and after some navigations,
+  // so nudge it on load, when the tab comes back, and on the first touch.
+  var hv=document.getElementById('heroVid');
+  if(hv){
+    hv.muted=true; hv.playsInline=true;
+    var kick=function(){ var p=hv.play(); if(p&&p.catch) p.catch(function(){}); };
+    kick();
+    hv.addEventListener('loadeddata',kick,{once:true});
+    document.addEventListener('visibilitychange',function(){ if(!document.hidden) kick(); });
+    ['touchstart','pointerdown','click'].forEach(function(ev){
+      document.addEventListener(ev,function once(){ kick(); document.removeEventListener(ev,once); },{passive:true});
+    });
+  }
+
+  // Queue ticker: a demo run of the room so the bar feels like a live night.
+  var QUEUE=[
+    ['Tasha','No Scrubs'],['Marcus','Return of the Mack'],['Jasmine','Say My Name'],
+    ['Dre','Poison'],['Simone','Before I Let Go'],['Kemi','Weak'],
+    ['Omar','Juicy'],['Tiana','Doo Wop (That Thing)'],['Nadia','Waterfalls'],
+    ['Leo',"Let's Get Married"],['Keisha','Killing Me Softly'],['Malik','Confessions Part II'],
+    ['Bianca','Creep'],['Kwame','Hypnotize'],['Renée','Always Be My Baby'],
+    ['Jalen','Nobody'],['Shay','Wannabe'],['Amara','Un-Break My Heart'],
+    ['Dom','California Love'],['Priya','Torn']
+  ];
+  var run=document.getElementById('tickerRun');
+  if(run){
+    var html=QUEUE.map(function(q,i){
+      return '<span class="ticker__item'+(i===0?' is-now':'')+'">'+
+             (i===0?'<span class="ticker__badge">NOW</span>':'')+
+             '<span class="who">'+q[0]+'</span><span class="song">'+q[1]+'</span>'+
+             '</span><span class="ticker__sep"></span>';
+    }).join('');
+    run.innerHTML=html+html;
+    var dist=run.scrollWidth/2;
+    if(dist>0) run.style.setProperty('--tick',Math.max(25,dist/55)+'s');
+  }
+
+  // Reveal on scroll (visible at rest; only fades if IO is available)
+  if('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var els=document.querySelectorAll('.reveal');
+    els.forEach(function(el){var r=el.getBoundingClientRect();if(r.top>innerHeight)el.classList.add('is-waiting');});
+    var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.remove('is-waiting');io.unobserve(x.target);}});},{rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(el){io.observe(el);});
+  }
+})();
+</script>
+
+</body>
+</html>

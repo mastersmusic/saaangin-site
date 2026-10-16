@@ -1,0 +1,13 @@
+# Static one-page site — nothing to build, publish the repo root.
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/hero.mp4"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
