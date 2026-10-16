@@ -248,8 +248,9 @@ img{max-width:100%;display:block}
 .rules p{margin:0;color:color-mix(in srgb,var(--white) 72%,var(--grape))}
 
 /* signup */
-.signup{display:flex;flex-wrap:wrap;gap:.8rem;max-width:620px}
+.signup{display:flex;flex-wrap:wrap;gap:.8rem;max-width:620px;margin-left:0;margin-right:auto}
 .signup__field{flex:1 1 260px;min-width:0}
+.signup__field--wide{flex:1 1 100%}
 .signup input{width:100%;min-height:48px;border-radius:999px;border:2px solid color-mix(in srgb,var(--white) 25%,transparent);background:var(--ink-2);color:var(--white);padding:.8rem 1.2rem;font:inherit;font-weight:700}
 .hp{position:absolute;left:-9999px}
 .form-msg{min-height:1.4em;margin:.8rem 0 0;font-weight:800;color:var(--mango)}
@@ -320,7 +321,7 @@ img{max-width:100%;display:block}
     <span class="ticker__label"><span class="ticker__dot" aria-hidden="true"></span>up next</span>
     <div class="ticker__track"><div class="ticker__run" id="tickerRun" aria-hidden="true"></div></div>
   </div>
-  <a class="btn transport__cta" href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">Get on the list</a>
+  <a class="btn transport__cta" href="#list">Request an invite</a>
 </nav>
 
 <main>
@@ -340,6 +341,7 @@ img{max-width:100%;display:block}
       <div class="now__actions">
         <a class="btn" href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">Request an invite</a>
         <a class="btn btn--ink" href="#card">Already a member?</a>
+      
       </div>
       <ul class="offer reveal">
         <li class="is-pick"><p class="data-label">Recommended</p><b>Bottle service</b><small>The best way to do the night — your own table for the night. Reserve through the host.</small></li>
@@ -409,19 +411,32 @@ img{max-width:100%;display:block}
 <!-- ============ NEXT ONE ============ -->
 <section class="section" id="list" aria-labelledby="listTitle">
   <div class="section__head reveal">
-    <h2 class="section-title" id="listTitle" style="color:var(--mango)">next one</h2>
-    <p class="lede">Every Tuesday. Leave an email and you'll get the night's number and the invite link before anyone posts it.</p>
+    <h2 class="section-title" id="listTitle" style="color:var(--mango)">request an invite</h2>
+    <p class="lede">The room is small and it stays small. Tell us who you are and who you know in it — if there's space, we'll come to you.</p>
   </div>
-  <form class="signup reveal" id="signupForm" novalidate>
+  <form class="signup reveal" id="signupForm" name="saaangin-list" method="POST" data-netlify="true" netlify-honeypot="company" novalidate>
+    <input type="hidden" name="form-name" value="saaangin-list">
+    <div class="signup__field">
+      <label class="sr-only" for="fullname">Your name</label>
+      <input type="text" id="fullname" name="name" placeholder="Your name" autocomplete="name" required>
+    </div>
     <div class="signup__field">
       <label class="sr-only" for="email">Email address</label>
       <input type="email" id="email" name="email" placeholder="you@email.com" autocomplete="email" required>
     </div>
+    <div class="signup__field">
+      <label class="sr-only" for="ig">Instagram handle</label>
+      <input type="text" id="ig" name="instagram" placeholder="@yourhandle" autocomplete="off" required>
+    </div>
+    <div class="signup__field signup__field--wide">
+      <label class="sr-only" for="vouch">Who's vouching for you?</label>
+      <input type="text" id="vouch" name="vouched_by" placeholder="Who's vouching for you?" autocomplete="off" required>
+    </div>
     <div class="hp" aria-hidden="true"><label for="company">Company</label><input type="text" id="company" name="company" tabindex="-1" autocomplete="off"></div>
-    <button class="btn" type="submit" id="signupBtn">Keep me posted</button>
+    <button class="btn" type="submit" id="signupBtn">Request an invite</button>
   </form>
   <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
-  <p class="fineprint">One email a week with the date and the invite. Nothing else, and you can leave any time.</p>
+  <p class="fineprint">Requesting isn't the same as being on the list — every name is read by a person. We only email about the night, and you can leave any time.</p>
   <div class="copyrow">
     <span class="data-label" style="color:var(--mango)">Or DM</span>
     <code id="handle">@wesaaangin</code>
@@ -500,10 +515,25 @@ img{max-width:100%;display:block}
   form.addEventListener('submit',function(e){
     e.preventDefault();
     var email=document.getElementById('email');
+    var nameEl=document.getElementById('fullname'), ig=document.getElementById('ig'), vouch=document.getElementById('vouch');
+    if(!nameEl.value.trim()){msg.textContent='Your name, please.';nameEl.focus();return;}
     if(!email.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)){msg.textContent='Enter a real email so we can reach you.';email.focus();return;}
+    if(!ig.value.trim()){msg.textContent='Your Instagram handle — it’s how we know who you are.';ig.focus();return;}
+    if(!vouch.value.trim()){msg.textContent='Tell us who in the room can vouch for you.';vouch.focus();return;}
     if(document.getElementById('company').value){return;}
-    msg.textContent="You're on the list. Watch for Tuesday's invite.";
-    email.value='';
+    var btn=document.getElementById('signupBtn');
+    btn.disabled=true; msg.textContent='Adding you…';
+    fetch('/', {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:new URLSearchParams(new FormData(form)).toString()
+    }).then(function(r){
+      if(!r.ok) throw new Error(r.status);
+      msg.textContent='Request in. Every name is read by a person — if there’s room, we’ll email you.';
+      form.reset();
+    }).catch(function(){
+      msg.textContent='That didn’t send — DM @wesaaangin and we’ll add you by hand.';
+    }).then(function(){ btn.disabled=false; });
   });
 
   // Copy handle
