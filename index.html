@@ -170,7 +170,7 @@ img{max-width:100%;display:block}
 .dj-line b{font-family:var(--display);font-weight:800;font-size:1.6rem}
 
 /* steps */
-.steps{display:grid;gap:1.6rem;list-style:none;margin:0;padding:0;counter-reset:step}
+.steps{display:grid;gap:1.6rem;list-style:none;margin:0 auto;padding:0;max-width:1180px;counter-reset:step}
 @media(min-width:720px){.steps{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .steps li{border-top:4px solid var(--grape);padding-top:1rem;display:grid;gap:.5rem;min-width:0}
 .steps li:nth-child(3),.steps li:nth-child(4){border-color:var(--pink)}
@@ -235,7 +235,7 @@ img{max-width:100%;display:block}
 .shot--more svg{width:28px;height:28px;margin-top:.6rem}
 
 /* rules */
-.rules{display:grid;gap:1rem;list-style:none;margin:0;padding:0}
+.rules{display:grid;gap:1rem;list-style:none;margin:0 auto;padding:0;max-width:1180px}
 @media(min-width:720px){.rules{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .rules li{background:var(--ink-2);border-radius:18px;border-top:4px solid var(--grape);padding:1.5rem;display:grid;gap:.5rem;min-width:0}
 .rules li:nth-child(2){border-top-color:var(--mango)}
