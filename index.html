@@ -27,7 +27,7 @@
   --ground:var(--grape); --type:var(--mango);
   --display:'Syne','Manrope',Arial,sans-serif; --body:'Manrope',Arial,sans-serif;
   --edge:max(20px,env(safe-area-inset-left,0px)); --edge-r:max(20px,env(safe-area-inset-right,0px));
-  --bar-h:66px;
+  --bar-h:88px;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -103,21 +103,22 @@ img{max-width:100%;display:block}
 .transport__home{display:flex;align-items:center;gap:.6rem;text-decoration:none;font-family:var(--display);font-weight:800;font-size:1.05rem;letter-spacing:-.02em;white-space:nowrap}
 .transport__home svg{width:22px;height:22px;color:var(--mango)}
 /* queue ticker in the transport bar */
-.ticker{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:.8rem;height:42px}
-.ticker__label{flex:0 0 auto;display:flex;align-items:center;gap:.5rem;background:var(--mango);color:var(--ink);border-radius:999px;padding:.35rem .85rem;font-family:var(--display);font-weight:800;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
-.ticker__dot{width:8px;height:8px;border-radius:50%;background:var(--pink);animation:blink 1.1s ease-in-out infinite}
+.ticker{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:1rem;height:58px}
+.ticker__label{flex:0 0 auto;display:flex;align-items:center;gap:.55rem;background:var(--mango);color:var(--ink);border-radius:999px;padding:.5rem 1.05rem;font-family:var(--display);font-weight:800;font-size:.86rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.ticker__dot{width:10px;height:10px;border-radius:50%;background:var(--pink);animation:blink 1.1s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-.ticker__track{position:relative;flex:1 1 auto;min-width:0;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 2.5rem,#000 calc(100% - 2.5rem),transparent);mask-image:linear-gradient(90deg,transparent,#000 2.5rem,#000 calc(100% - 2.5rem),transparent)}
+.ticker__track{position:relative;flex:1 1 auto;min-width:0;height:100%;overflow:hidden;background:color-mix(in srgb,var(--ink-2) 80%,#000);border-radius:999px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 2.5rem,#000 calc(100% - 2.5rem),transparent);mask-image:linear-gradient(90deg,transparent,#000 2.5rem,#000 calc(100% - 2.5rem),transparent)}
 .ticker__run{position:absolute;top:0;left:0;height:100%;display:flex;align-items:center;white-space:nowrap;animation:tickroll var(--tick,70s) linear infinite;will-change:transform}
 .ticker:hover .ticker__run{animation-play-state:paused}
 @keyframes tickroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.ticker__item{display:inline-flex;align-items:center;gap:.6rem;padding:0 1rem}
-.ticker__item .who{font-family:var(--display);font-weight:800;font-size:.98rem;letter-spacing:-.01em}
-.ticker__item .song{font-weight:700;font-size:.92rem;color:color-mix(in srgb,var(--white) 68%,var(--grape))}
+.ticker__item{display:inline-flex;align-items:center;gap:.7rem;padding:0 1.3rem}
+.ticker__item .who{font-family:var(--display);font-weight:800;font-size:1.24rem;letter-spacing:-.01em}
+.ticker__item .song{font-weight:700;font-size:1.08rem;color:color-mix(in srgb,var(--white) 72%,var(--grape))}
 .ticker__item.is-now .who{color:var(--mango)}
-.ticker__badge{background:var(--pink);color:var(--white);border-radius:999px;padding:.12rem .5rem;font-family:var(--display);font-weight:800;font-size:.68rem;letter-spacing:.12em}
-.ticker__sep{flex:0 0 auto;width:7px;height:7px;transform:rotate(45deg);background:var(--grape)}
+.ticker__badge{background:var(--pink);color:var(--white);border-radius:999px;padding:.2rem .65rem;font-family:var(--display);font-weight:800;font-size:.78rem;letter-spacing:.12em}
+.ticker__sep{flex:0 0 auto;width:9px;height:9px;transform:rotate(45deg);background:var(--grape)}
 @media(max-width:860px){.ticker__label{display:none}}
+@media(max-width:560px){.ticker__label{display:none!important}}
 
 /* phones: the hero video sits as a full-bleed 16:9 band so the whole stage and logo are visible, with the words underneath */
 @media(max-width:700px){
@@ -129,17 +130,16 @@ img{max-width:100%;display:block}
   .hero__tag{max-width:none}
 }
 
-/* phones: the bar stacks — mark + CTA on top, ticker full width underneath */
+/* phones: one row — the mark, then the ticker across the rest */
 @media(max-width:700px){
-  .transport{position:static;height:auto;flex-wrap:wrap;padding-block:.65rem;gap:.5rem .8rem}
+  .transport{height:72px;gap:.7rem}
   .transport__home span{display:inline}
-  .transport__cta{margin-left:auto;padding:.5rem .9rem;min-height:38px;font-size:.9rem}
-  .ticker{order:3;flex:1 0 100%;height:34px;gap:.6rem}
-  .ticker__label{display:inline-flex;font-size:.68rem;padding:.26rem .6rem;letter-spacing:.08em}
+  .ticker{height:48px;gap:.6rem}
+  .ticker__label{display:inline-flex;font-size:.74rem;padding:.36rem .7rem;letter-spacing:.08em}
   .ticker__track{-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 1.5rem),transparent);mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 1.5rem),transparent)}
-  .ticker__item{padding:0 .75rem;gap:.45rem}
-  .ticker__item .who{font-size:.92rem}
-  .ticker__item .song{font-size:.86rem}
+  .ticker__item{padding:0 .9rem;gap:.5rem}
+  .ticker__item .who{font-size:1.08rem}
+  .ticker__item .song{font-size:.98rem}
 }
 .transport__cta{padding:.6rem 1.1rem;min-height:40px;font-size:.95rem}
 @media(min-width:701px) and (max-width:860px){.transport__home span{display:none}}
@@ -336,7 +336,6 @@ img{max-width:100%;display:block}
     <span class="ticker__label"><span class="ticker__dot" aria-hidden="true"></span>up next</span>
     <div class="ticker__track"><div class="ticker__run" id="tickerRun" aria-hidden="true"></div></div>
   </div>
-  <a class="btn transport__cta" href="#list">Request an invite</a>
 </nav>
 
 <main>
