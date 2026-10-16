@@ -59,7 +59,11 @@ img{max-width:100%;display:block}
 
 /* ---------- hero ---------- */
 .hero{position:relative;background:var(--ground);color:var(--white);overflow:hidden;min-height:min(86vh,800px);display:flex;align-items:flex-end;padding-block:clamp(3rem,7vw,5.5rem) clamp(2.2rem,5vw,4rem);padding-left:var(--edge);padding-right:var(--edge-r)}
-.hero__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:saturate(.95) contrast(1.05) brightness(.82);z-index:0;pointer-events:none}
+/* The still carries the hero. The video is invisible until it is genuinely playing,
+   so a blocked autoplay shows the photo rather than Safari's play glyph. */
+.hero__still,.hero__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:saturate(.95) contrast(1.05) brightness(.82);z-index:0;pointer-events:none}
+.hero__video{opacity:0;transition:opacity .7s ease}
+.hero.is-live .hero__video{opacity:1}
 /* iOS/Safari draw a big play glyph over an inline video until it starts — never show it */
 .hero__video::-webkit-media-controls{display:none!important}
 .hero__video::-webkit-media-controls-panel{display:none!important}
@@ -115,7 +119,8 @@ img{max-width:100%;display:block}
 /* phones: the hero video sits as a full-bleed 16:9 band so the whole stage and logo are visible, with the words underneath */
 @media(max-width:700px){
   .hero{min-height:0;display:block;padding-block:0 clamp(1.8rem,7vw,2.6rem);background:var(--ink)}
-  .hero__video{position:relative;display:block;width:calc(100% + var(--edge) + var(--edge-r));margin-left:calc(-1 * var(--edge));height:auto;aspect-ratio:16/9;object-position:center 46%;filter:saturate(.98) contrast(1.04) brightness(.94);margin-bottom:1.6rem}
+  .hero__still{position:relative;display:block;width:calc(100% + var(--edge) + var(--edge-r));max-width:none;margin-left:calc(-1 * var(--edge));height:auto;aspect-ratio:16/9;object-position:center 46%;filter:saturate(.98) contrast(1.04) brightness(.94);margin-bottom:1.6rem}
+  .hero__video{position:absolute;top:0;left:0;width:100%;height:auto;aspect-ratio:16/9;margin:0;object-position:center 46%;filter:saturate(.98) contrast(1.04) brightness(.94)}
   .hero__tint,.hero__wash,.hero__scrim{display:none}
   .hero__inner{gap:1.6rem}
   .hero__tag{max-width:none}
@@ -267,14 +272,15 @@ img{max-width:100%;display:block}
 
 .reveal{opacity:1;transform:none;transition:opacity .6s ease,transform .6s ease}
 .reveal.is-waiting{opacity:0;transform:translateY(18px)}
-@media(prefers-reduced-motion:reduce){.hero__video{display:none}.reveal,.reveal.is-waiting{opacity:1;transform:none;transition:none}.btn,.policy__name,.shot::before{transition:none}.ticker__run,.ticker__dot{animation:none}}
+@media(prefers-reduced-motion:reduce){.hero__video{display:none}.hero.is-live .hero__video{opacity:0}.reveal,.reveal.is-waiting{opacity:1;transform:none;transition:none}.btn,.policy__name,.shot::before{transition:none}.ticker__run,.ticker__dot{animation:none}}
 </style>
 
 <a class="skip" href="#sing">Skip to the night</a>
 
 <!-- ============ HERO ============ -->
 <header class="hero scanlines" id="top">
-  <video class="hero__video" id="heroVid" src="hero.mp4" poster="hero-poster.jpg" autoplay muted defaultMuted loop playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
+  <img class="hero__still" src="hero-poster.jpg" alt="" aria-hidden="true">
+  <video class="hero__video" id="heroVid" src="hero.mp4" autoplay muted defaultMuted loop playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
   <div class="hero__tint" aria-hidden="true"></div>
   <div class="hero__wash" aria-hidden="true"></div>
   <div class="hero__scrim" aria-hidden="true"></div>
@@ -514,7 +520,11 @@ img{max-width:100%;display:block}
   var hv=document.getElementById('heroVid');
   if(hv){
     hv.muted=true; hv.playsInline=true;
-    var kick=function(){ var p=hv.play(); if(p&&p.catch) p.catch(function(){}); };
+    var hero=hv.parentElement;
+    var live=function(){ if(hero) hero.classList.add('is-live'); };
+    hv.addEventListener('playing',live);
+    hv.addEventListener('timeupdate',function(){ if(hv.currentTime>0 && !hv.paused) live(); });
+    var kick=function(){ var p=hv.play(); if(p&&p.then) p.then(live).catch(function(){}); };
     kick();
     hv.addEventListener('loadeddata',kick,{once:true});
     document.addEventListener('visibilitychange',function(){ if(!document.hidden) kick(); });
