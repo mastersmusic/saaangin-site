@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1A1424">
+<title>Host · SAAANGIN' Trivia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Syne:wght@800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/trivia.css">
+</head>
+<body>
+<main class="hwrap">
+  <h1>SAAANGIN' trivia <span>host</span></h1>
+
+  <section class="panel" id="gate">
+    <h2>Host passcode</h2>
+    <form id="gateform" class="row">
+      <div class="field"><label for="pin">Passcode</label><input id="pin" type="password" autocomplete="current-password"></div>
+      <button class="ghost" type="submit">Unlock</button>
+    </form>
+    <p class="err" id="gateerr" role="alert"></p>
+  </section>
+
+  <div id="app" hidden style="display:flex;flex-direction:column;gap:14px">
+    <p class="warn" id="sample" hidden>These are the sample questions, and anyone can look them up. Save your own set below before you play for a prize.</p>
+
+    <section class="panel">
+      <p class="now">On screen: <b id="hnow">…</b></p>
+      <p class="now" id="hansrow" hidden>Answer: <b id="hans"></b></p>
+      <div class="stats"><span><b id="scount">0</b>in the game</span><span id="sansw" hidden><b id="sans">0</b>answered</span><span id="stop" hidden><b id="stopv"></b>leading</span></div>
+      <div class="field" id="pickrow" hidden>
+        <label for="wno">Winner's player number (from the ticket on their phone)</label>
+        <input id="wno" inputmode="numeric" autocomplete="off">
+      </div>
+      <button type="button" class="primary" id="next">…</button>
+      <p class="err" id="herr" role="alert"></p>
+    </section>
+
+    <section class="panel">
+      <h2>Tonight</h2>
+      <form class="row" id="prizeform">
+        <div class="field"><label for="prize">Prize shown on screen</label><input id="prize" maxlength="40" autocomplete="off"></div>
+        <button class="ghost" type="submit">Save</button>
+      </form>
+      <form class="row" id="removeform">
+        <div class="field"><label for="rno">Take a name off the screen (player number)</label><input id="rno" inputmode="numeric" autocomplete="off"></div>
+        <button class="ghost" type="submit">Remove</button>
+      </form>
+      <button type="button" class="ghost" id="reset">Start a new game</button>
+      <p class="msg" id="tmsg" role="status"></p>
+    </section>
+
+    <section class="panel">
+      <h2>Questions</h2>
+      <p class="now">Change these only while the lobby is on screen. They are stored privately, not on the public site.</p>
+      <div id="editor"></div>
+      <div class="row"><button type="button" class="ghost" id="saveset">Save questions</button><button type="button" class="ghost" id="reload">Discard my edits</button></div>
+      <p class="msg" id="qmsg" role="status"></p>
+    </section>
+
+    <section class="panel">
+      <h2>Sign-ups</h2>
+      <p class="now">Everyone who has joined a game, with their invite opt-in and when they gave it.</p>
+      <div class="row"><button type="button" class="ghost" id="export">Get the list</button><a class="ghost" id="dl" hidden download="saaangin-trivia-signups.csv" style="text-decoration:none">Download CSV</a><button type="button" class="ghost" id="copy" hidden>Copy</button></div>
+      <div class="field" id="csvrow" hidden><label for="csv">CSV</label><textarea id="csv" rows="6" readonly></textarea></div>
+      <p class="msg" id="xmsg" role="status"></p>
+    </section>
+
+    <button type="button" class="ghost" id="lock">Lock this page</button>
+  </div>
+</main>
+<script src="/trivia-common.js"></script>
+<script>
+(function(){
+'use strict';
+var esc=TV.esc,pad=TV.pad;
+var $=function(id){return document.getElementById(id);};
+var pin=TV.store.get('tv_pin')||'',st=null,sending=false,editorFor='',armed=false,timer=null;
+
+function steps(nq,nf){
+  var o=[{t:'lobby'},{t:'rules'}],i;
+  for(i=0;i<nq;i++)o.push({t:'q',i:i},{t:'r',i:i});
+  o.push({t:'board'},{t:'final'});
+  for(i=0;i<nf;i++)o.push({t:'f',i:i},{t:'fr',i:i});
+  o.push({t:'pick'},{t:'winner'});return o;
+}
+function nowLabel(){
+  var i=st.i;
+  return {lobby:'Lobby, scan to play',rules:'How it works',q:'Question '+(i+1)+(TV.phase(st)==='lead'?', get ready':TV.phase(st)==='open'?', timer running':', time up'),r:'Answer to question '+(i+1),board:'Top five',final:'Final intro',f:'Final round '+(i+1),fr:'Final round '+(i+1)+' answer',pick:'Calling the winner up',winner:'Winner'}[st.t];
+}
+function nextLabel(){
+  var all=steps(st.nq,st.nf),nx=all[st.step+1];
+  if(st.t==='q'||st.t==='f')return 'Reveal the answer';
+  if(st.t==='pick')return 'Announce the winner';
+  if(st.t==='winner')return 'Start a new game';
+  return {rules:'Show how it works',q:'Start question '+(nx.i+1),board:'Show the top five',final:'Start the final',f:'Final round '+(nx.i+1),pick:'Call the winner up'}[nx.t];
+}
+function call(action,extra){
+  var body={pin:pin,action:action};
+  if(extra)for(var k in extra)body[k]=extra[k];
+  return TV.api('host',body);
+}
+function show(s){
+  st=s;
+  $('gate').hidden=true;$('app').hidden=false;
+  $('sample').hidden=!s.sample;
+  $('hnow').textContent=nowLabel();
+  $('hansrow').hidden=!s.answer;$('hans').textContent=s.answer||'';
+  $('scount').textContent=s.count;
+  $('sansw').hidden=s.t!=='q';$('sans').textContent=s.answered||0;
+  $('stop').hidden=!(s.top&&s.top.score>0);if(s.top)$('stopv').textContent=s.top.name+' '+pad(s.top.no);
+  $('pickrow').hidden=s.t!=='pick';
+  if(!sending)$('next').textContent=nextLabel();
+  if(document.activeElement!==$('prize'))$('prize').value=s.prize;
+  if(editorFor!==s.id+'|'+JSON.stringify(s.set).length&&!editorDirty){buildEditor(s.set);editorFor=s.id+'|'+JSON.stringify(s.set).length;}
+}
+function refresh(){
+  if(!pin)return;
+  call('state').then(show).catch(function(err){
+    if(err.status===401||err.status===503){lock(err.message);}
+  }).then(function(){clearTimeout(timer);timer=setTimeout(refresh,document.hidden?6000:2000);});
+}
+function lock(msg){
+  pin='';TV.store.del('tv_pin');clearTimeout(timer);
+  $('app').hidden=true;$('gate').hidden=false;$('gateerr').textContent=msg||'';
+}
+
+/* ---- questions editor ---- */
+var editorDirty=false;
+function buildEditor(set){
+  var h='';
+  set.questions.forEach(function(q,k){
+    h+='<div class="qcard" data-q="'+k+'"><span class="lbl">Question '+(k+1)+'</span>'+
+      '<input type="text" data-f="cat" aria-label="Category for question '+(k+1)+'" placeholder="Category" maxlength="24" value="'+esc(q.cat)+'">'+
+      '<input type="text" data-f="q" aria-label="Question '+(k+1)+'" placeholder="Question" maxlength="160" value="'+esc(q.q)+'"><div class="ans">'+
+      q.a.map(function(a,j){return '<input type="radio" name="c'+k+'" value="'+j+'" aria-label="'+'ABCD'[j]+' is correct"'+(q.c===j?' checked':'')+'><input type="text" data-a="'+j+'" aria-label="Answer '+'ABCD'[j]+'" placeholder="Answer '+'ABCD'[j]+'" maxlength="60" value="'+esc(a)+'">';}).join('')+
+      '</div></div>';
+  });
+  set.final.forEach(function(f,k){
+    h+='<div class="qcard" data-f="'+k+'"><span class="lbl">Final round '+(k+1)+' · which came out first?</span><div class="ans">'+
+      f.a.map(function(a,j){return '<input type="radio" name="f'+k+'" value="'+j+'" aria-label="'+'AB'[j]+' came first"'+(f.c===j?' checked':'')+'><input type="text" data-a="'+j+'" aria-label="Side '+'AB'[j]+'" placeholder="Side '+'AB'[j]+'" maxlength="70" value="'+esc(a)+'">';}).join('')+
+      '</div><input type="text" data-f="why" aria-label="Note shown with the answer" placeholder="Note shown with the answer, like: 1995, a year earlier" maxlength="80" value="'+esc(f.why||'')+'"></div>';
+  });
+  $('editor').innerHTML=h;editorDirty=false;
+}
+function readEditor(){
+  var set={questions:[],final:[]};
+  [].forEach.call(document.querySelectorAll('.qcard[data-q]'),function(c,k){
+    var r=c.querySelector('input[type=radio]:checked');
+    set.questions.push({cat:c.querySelector('[data-f=cat]').value,q:c.querySelector('[data-f=q]').value,
+      a:[].map.call(c.querySelectorAll('[data-a]'),function(i){return i.value;}),c:r?+r.value:-1});
+  });
+  [].forEach.call(document.querySelectorAll('.qcard[data-f]'),function(c){
+    var r=c.querySelector('input[type=radio]:checked');
+    set.final.push({a:[].map.call(c.querySelectorAll('[data-a]'),function(i){return i.value;}),c:r?+r.value:-1,why:c.querySelector('[data-f=why]').value});
+  });
+  return set;
+}
+$('editor').addEventListener('input',function(){editorDirty=true;});
+$('saveset').addEventListener('click',function(){
+  $('qmsg').textContent='Saving…';
+  call('saveSet',{set:readEditor()}).then(function(s){editorDirty=false;editorFor='';show(s);$('qmsg').textContent='Saved. The sample warning is gone once your own set is in.';})
+  .catch(function(err){$('qmsg').textContent=err.message;});
+});
+$('reload').addEventListener('click',function(){editorDirty=false;editorFor='';if(st)show(st);$('qmsg').textContent='Back to the saved questions.';});
+
+/* ---- controls ---- */
+$('gateform').addEventListener('submit',function(e){
+  e.preventDefault();pin=$('pin').value;$('gateerr').textContent='';
+  call('state').then(function(s){TV.store.set('tv_pin',pin);$('pin').value='';show(s);refresh();})
+  .catch(function(err){pin='';$('gateerr').textContent=err.message;});
+});
+$('next').addEventListener('click',function(){
+  if(sending||!st)return;
+  $('herr').textContent='';
+  if(st.t==='winner'){$('reset').click();return;}
+  var extra={from:st.step};
+  if(st.t==='pick'){extra.no=$('wno').value.trim();if(!extra.no){$('herr').textContent='Type the number from the winner\'s ticket.';$('wno').focus();return;}}
+  sending=true;$('next').disabled=true;
+  call('next',extra).then(function(s){$('wno').value='';show(s);})
+  .catch(function(err){$('herr').textContent=err.message;})
+  .then(function(){sending=false;$('next').disabled=false;if(st)$('next').textContent=nextLabel();});
+});
+$('prizeform').addEventListener('submit',function(e){
+  e.preventDefault();
+  call('prize',{prize:$('prize').value}).then(function(s){$('prize').blur();show(s);$('tmsg').textContent='Prize updated on screen.';}).catch(function(err){$('tmsg').textContent=err.message;});
+});
+$('removeform').addEventListener('submit',function(e){
+  e.preventDefault();
+  call('remove',{no:$('rno').value.trim()}).then(function(s){$('rno').value='';show(s);$('tmsg').textContent='Removed from the screen and the scores.';}).catch(function(err){$('tmsg').textContent=err.message;});
+});
+$('reset').addEventListener('click',function(){
+  var b=$('reset');
+  if(!armed){armed=true;b.textContent='Tap again to clear this game and reopen the lobby';setTimeout(function(){armed=false;b.textContent='Start a new game';},4000);return;}
+  armed=false;b.textContent='Start a new game';
+  call('reset').then(function(s){editorFor='';show(s);$('tmsg').textContent='New game. Sign-ups from earlier are kept in the list.';}).catch(function(err){$('tmsg').textContent=err.message;});
+});
+$('export').addEventListener('click',function(){
+  $('xmsg').textContent='Getting the list…';
+  call('export').then(function(r){
+    $('csv').value=r.csv;$('csvrow').hidden=false;$('copy').hidden=false;
+    try{$('dl').href=URL.createObjectURL(new Blob([r.csv],{type:'text/csv'}));$('dl').hidden=false;}catch(e){}
+    $('xmsg').textContent=r.count+' people in the list.';
+  }).catch(function(err){$('xmsg').textContent=err.message;});
+});
+$('copy').addEventListener('click',function(){
+  try{navigator.clipboard.writeText($('csv').value).then(function(){$('xmsg').textContent='Copied.';},function(){$('xmsg').textContent='Copy was blocked. Use Download.';});}
+  catch(e){$('xmsg').textContent='Copy was blocked. Use Download.';}
+});
+$('lock').addEventListener('click',function(){lock('');});
+setInterval(function(){if(st&&!$('app').hidden)$('hnow').textContent=nowLabel();},500);
+if(pin)refresh();
+})();
+</script>
+</body>
+</html>

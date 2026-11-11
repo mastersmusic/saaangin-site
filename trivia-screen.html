@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Screen · SAAANGIN' Trivia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Syne:wght@800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/trivia.css">
+<style>html,body{overflow:hidden;cursor:none}</style>
+</head>
+<body>
+<!-- The venue screen. Add this page to OBS as a Browser source at 1920 x 1080. -->
+<div class="stage" id="stage"><div class="s center"><p class="eyebrow">SAAANGIN' trivia</p><h1 class="title">You better <span>know.</span></h1></div></div>
+<script src="/vendor/qrcode.js"></script>
+<script src="/trivia-common.js"></script>
+<script>
+(function(){
+'use strict';
+var esc=TV.esc,pad=TV.pad,L=TV.LETTERS;
+var st=null,key='',shown={},down=0;
+var stage=document.getElementById('stage');
+var JOIN=location.origin+'/play';
+var $=function(id){return document.getElementById(id);};
+
+function chip(p,fresh){return '<span class="chip'+(fresh?' new':'')+'">'+esc(p.name)+'</span>';}
+function drawQR(){
+  var cv=$('qr');if(!cv||typeof qrcode!=='function')return;
+  var q=qrcode(0,'M');q.addData(JOIN);q.make();
+  var n=q.getModuleCount(),px=10;cv.width=cv.height=n*px;
+  var x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);x.fillStyle='#1A1424';
+  for(var r=0;r<n;r++)for(var c=0;c<n;c++)if(q.isDark(r,c))x.fillRect(c*px,r*px,px,px);
+}
+function view(){
+  var t=st.t,h='';
+  if(t==='lobby'){
+    shown={};st.names.forEach(function(p){shown[p.no]=1;});
+    h='<div class="s lobby"><div class="lobby-l"><p class="eyebrow">Music + pop culture trivia · free to play</p>'+
+      '<h1 class="title">You better <span>know.</span></h1>'+
+      '<p class="sub">Scan. Join. Play for <b>'+esc(st.prize)+'</b> tonight.</p>'+
+      '<div class="wall" id="wall">'+st.names.slice().reverse().map(function(p){return chip(p,false);}).join('')+'</div></div>'+
+      '<div class="lobby-r"><div class="qr sticker"><canvas id="qr" role="img" aria-label="QR code to join the game"></canvas><p>Scan to play</p></div>'+
+      '<p class="count"><b id="count">'+st.count+'</b>in the game</p></div></div>';
+  }else if(t==='rules'){
+    h='<div class="s rules"><p class="eyebrow">How it works</p><h2 class="h2">'+st.nq+' questions. One final. One winner.</h2><ol>'+
+      '<li>Free to play. No purchase needed. 19+.</li>'+
+      '<li>Answer on your phone. Faster right answers score more.</li>'+
+      '<li>The final is played in the room. Last one standing wins.</li>'+
+      '<li>Tonight\'s prize: '+esc(st.prize)+'. One winner.</li>'+
+      '<li>You must be in the game to win. Staff can\'t play.</li></ol></div>';
+  }else if(t==='q'||t==='r'){
+    var rev=t==='r',lead=TV.phase(st)==='lead';
+    h='<div class="s"><div class="qhead"><span class="pill">'+esc(st.q.cat)+' · question '+(st.i+1)+' of '+st.nq+'</span>'+
+      '<span class="tnum" id="tnum"></span></div>';
+    if(lead){
+      h+='<div class="s center" style="position:relative;inset:auto;flex:1;padding:0"><h2 class="title">Get <span>ready.</span></h2><p class="sub">Phones out. Thumbs up.</p></div>';
+    }else{
+      h+='<h2 class="qtext">'+esc(st.q.q)+'</h2><div class="opts">'+
+        st.q.a.map(function(a,k){return '<div class="opt'+(rev?(k===st.c?' right':' dim'):'')+'"><i>'+L[k]+'</i><span>'+esc(a)+'</span>'+(rev?'<em>'+st.tally[k]+'</em>':'')+'</div>';}).join('')+
+        '</div>'+(rev?'':'<div class="bar"><b id="tbar"></b></div>');
+    }
+    h+='<div class="foot"><span>'+(rev?'Answer: <b>'+L[st.c]+' · '+esc(st.q.a[st.c])+'</b>':'<b id="ans">'+(st.answered||0)+'</b> of <b id="of">'+st.count+'</b> answered')+'</span><span>Scan to play any time</span></div></div>';
+  }else if(t==='board'){
+    h='<div class="s board"><p class="eyebrow">After '+st.nq+' questions</p><h2 class="h2">Top five</h2><ol>'+
+      st.top.map(function(p,k){return '<li><span class="rk">'+(k+1)+'</span><span class="nm">'+esc(p.name)+' · No. '+pad(p.no)+'</span><span class="sc">'+p.score.toLocaleString()+'</span></li>';}).join('')+
+      '</ol></div>';
+  }else if(t==='final'){
+    h='<div class="s center"><p class="eyebrow">The final · phones down</p><h1 class="title">Last one <span>saaangin\'.</span></h1>'+
+      '<p class="sub"><b>Everybody up.</b> Hands up for A. Hands on your head for B.<br>Wrong answer, sit down. Last one standing takes <b>'+esc(st.prize)+'</b>.</p></div>';
+  }else if(t==='f'||t==='fr'){
+    var fr=t==='fr';
+    h='<div class="s"><div class="qhead"><span class="pill">Final · round '+(st.i+1)+'</span><span class="tnum" id="tnum"></span></div>'+
+      '<h2 class="h2">Which came out first?</h2><div class="duo">'+
+      st.f.a.map(function(a,k){return '<div class="side'+(fr?(k===st.f.c?' right':' dim'):'')+'"><span class="how">'+(k===0?'A · hands up':'B · hands on your head')+'</span><span class="what">'+esc(a)+'</span></div>';}).join('')+
+      '</div>'+(fr?'':'<div class="bar"><b id="tbar"></b></div>')+
+      '<div class="foot"><span>'+(fr?'<b>'+L[st.f.c]+'</b>'+(st.f.why?' · '+esc(st.f.why):'')+'. Got it wrong? Sit down.':'Pick a side and hold it.')+'</span><span></span></div></div>';
+  }else if(t==='pick'){
+    h='<div class="s center"><p class="eyebrow">We have a winner</p><h1 class="title">Bring your <span>ticket</span> up.</h1>'+
+      '<p class="sub">Last one standing: show the host the player number on your phone.</p></div>';
+  }else if(t==='winner'){
+    var w=st.winner||{no:0,name:''};
+    h='<div class="s center winner"><p class="eyebrow">Tonight\'s winner · No. '+pad(w.no)+'</p>'+
+      '<div class="name sticker">'+esc(w.name)+'</div><p class="takes">takes '+esc(st.prize)+'</p><p class="sub">You better know.</p></div>';
+  }
+  return h;
+}
+function render(){
+  if(!st)return;
+  var k=[st.id,st.t,st.i,TV.phase(st),st.prize].join('|');
+  if(k!==key){key=k;stage.innerHTML=view();if(st.t==='lobby')drawQR();}
+  if(st.t==='lobby'){
+    var w=$('wall');
+    st.names.forEach(function(p){if(!shown[p.no]&&w){shown[p.no]=1;w.insertAdjacentHTML('afterbegin',chip(p,true));while(w.children.length>24)w.removeChild(w.lastChild);}});
+    var c=$('count');if(c)c.textContent=st.count;
+  }
+  if(st.t==='q'){var a=$('ans'),o=$('of');if(a)a.textContent=st.answered||0;if(o)o.textContent=st.count;}
+  tick();
+}
+function tick(){
+  if(!st)return;
+  var num=$('tnum'),bar=$('tbar'),now=TV.now(),left,total;
+  if(st.t==='q'){
+    if(now<st.qStart){if(num)num.textContent=Math.ceil((st.qStart-now)/1000);return;}
+    left=Math.max(0,st.deadline-now);total=st.qms;
+  }else if(st.t==='f'){left=Math.max(0,st.deadline-now);total=st.fms;}
+  else return;
+  if(bar)bar.style.width=(100*left/total)+'%';
+  if(num)num.textContent=left>0?Math.ceil(left/1000):'Time!';
+}
+function poll(){
+  TV.api('state').then(function(s){st=s;down=0;render();}).catch(function(){down++;})
+  .then(function(){setTimeout(poll,1000);});
+}
+setInterval(function(){if(st){var k=[st.id,st.t,st.i,TV.phase(st),st.prize].join('|');if(k!==key)render();else tick();}},100);
+poll();
+})();
+</script>
+</body>
+</html>

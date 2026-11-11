@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1A1424">
+<title>Play · SAAANGIN' Trivia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Syne:wght@800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/trivia.css">
+</head>
+<body>
+<main class="pwrap" id="app" aria-live="polite">
+  <div class="pbrand">SAAANGIN' <span>trivia</span></div>
+  <h2>Loading the game…</h2>
+</main>
+<script src="/trivia-common.js"></script>
+<script>
+(function(){
+'use strict';
+var esc=TV.esc,pad=TV.pad,L=TV.LETTERS;
+var me=TV.store.get('tv_me'),saved=TV.store.get('tv_details')||{},st=null,key='',busy=false,note='',timer=null,down=false;
+var app=document.getElementById('app');
+var BRAND='<div class="pbrand">SAAANGIN\' <span>trivia</span></div>';
+
+function ticket(label){return '<div class="ticket"><small>Player</small><div class="num">'+pad(me.no)+'</div><div class="nm">'+esc(me.name)+'</div><small>'+esc(label)+'</small></div>';}
+function myAns(i){return me&&me.ans&&me.ans[i]!=null?me.ans[i]:null;}
+
+function joinForm(){
+  var opted=saved.opted===true;
+  return BRAND+'<h2>Get in the game.</h2><p>Free to play. <span id="prizeline"></span></p>'+
+    '<form id="join" novalidate style="display:flex;flex-direction:column;gap:12px">'+
+    '<div class="field"><label for="fname">First name</label><input id="fname" autocomplete="given-name" maxlength="20" value="'+esc(saved.name||'')+'"></div>'+
+    '<div class="field"><label for="fphone">Mobile</label><input id="fphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="416 555 0123" value="'+esc(saved.phone||'')+'"></div>'+
+    '<div class="field"><label for="femail">Email</label><input id="femail" type="email" autocomplete="email" placeholder="you@email.com" value="'+esc(saved.email||'')+'"></div>'+
+    '<div class="field"><label for="fig">Instagram <small>optional</small></label><input id="fig" autocomplete="off" autocapitalize="none" placeholder="@handle" maxlength="31" value="'+esc(saved.ig||'')+'"></div>'+
+    '<div class="hp" aria-hidden="true"><label for="website">Leave this empty</label><input id="website" tabindex="-1" autocomplete="off"></div>'+
+    (opted?'<p>You\'re on the invite list. Reply STOP to any text or use the unsubscribe link to leave it.</p>':
+      '<label class="check" for="fopt"><input type="checkbox" id="fopt"><span>Text and email me my SAAANGIN\' invite each week. Unsubscribe any time.</span></label>')+
+    '<p class="err" id="ferr" role="alert"></p>'+
+    '<button class="btn" type="submit" id="fgo">Join the game</button>'+
+    '<details class="fine"><summary>How we use your details</summary>'+
+    '<p class="fine">SAAANGIN\' (Toronto) collects your name, mobile and email to run this game, show your first name on the screen and contact the winner. We only send invites if you tick the box. We don\'t sell your details. To see or delete what we hold, email info@saaangin.com.</p></details>'+
+    '<p class="fine">No purchase needed. 19+. One prize per game; the winner is the last player standing in the final.</p></form>';
+}
+
+function view(){
+  if(!me)return joinForm();
+  var h=BRAND,t=st.t;
+  if(t==='lobby'||t==='rules'){
+    h+='<h2>You\'re in.</h2>'+ticket('Keep this page open')+'<p>Watch the big screen. Questions land here when the host starts.</p>';
+  }else if(t==='q'){
+    var ph=TV.phase(st),a=myAns(st.i);
+    if(ph==='lead'){
+      h+='<p>'+esc(st.q.cat)+' · question '+(st.i+1)+' of '+st.nq+'</p><h2>Get ready…</h2><p>Thumbs up. The answers appear here in a moment.</p>';
+    }else if(a!=null){
+      h+='<h2>Locked in: '+L[a]+'</h2><p class="pq">'+esc(st.q.a[a])+'</p><p>Eyes on the screen.</p>';
+    }else if(ph==='open'){
+      h+='<p>'+esc(st.q.cat)+' · question '+(st.i+1)+' of '+st.nq+'</p><p class="pq">'+esc(st.q.q)+'</p>'+
+        '<div class="pbar"><b id="pbar"></b></div><div class="popts">'+
+        st.q.a.map(function(x,k){return '<button type="button" data-k="'+k+'"><i>'+L[k]+'</i>'+esc(x)+'</button>';}).join('')+'</div>';
+    }else{
+      h+='<h2>Time\'s up.</h2><p>No answer this round. The next one is coming.</p>';
+    }
+  }else if(t==='r'){
+    var r=st.results&&st.results[me.no],right=L[st.c]+': '+esc(st.q.a[st.c]);
+    if(r&&r[0]>0)h+='<p class="big">+'+r[0]+'</p><h2>Correct.</h2>';
+    else if(r)h+='<p class="big miss">+0</p><h2>Not this one.</h2><p>It was '+right+'.</p>';
+    else h+='<p class="big miss">+0</p><h2>No answer.</h2><p>It was '+right+'.</p>';
+    h+='<p>Your score: <b>'+(r?r[1]:scoreOf()).toLocaleString()+'</b></p>';
+  }else if(t==='board'){
+    var mine=scoreOf(),rank=1;
+    Object.keys(st.scores||{}).forEach(function(n){if(st.scores[n]>mine)rank++;});
+    h+='<p class="big">#'+rank+'</p><h2>of '+st.count+' players</h2><p>Score: <b>'+mine.toLocaleString()+'</b>. The final is next, and everyone is still in it.</p>';
+  }else if(t==='final'||t==='f'||t==='fr'){
+    h+='<h2>Phones down.</h2><p>The final is played in the room. Stand up and watch the screen.</p>'+ticket('Show this if you win');
+  }else if(t==='pick'){
+    h+='<h2>Last one standing?</h2>'+ticket('Show the host')+'<p>Take this to the stage to claim '+esc(st.prize)+'.</p>';
+  }else if(t==='winner'){
+    if(st.winner&&st.winner.no===me.no)h+='<p class="big">That\'s you.</p>'+ticket('Winner')+'<p>Show this on stage to collect '+esc(st.prize)+'.</p>';
+    else h+='<h2>'+esc(st.winner?st.winner.name:'Someone')+' takes it.</h2><p>Thanks for playing. See you next week.</p>';
+  }
+  if(note)h+='<p class="err" role="alert">'+esc(note)+'</p>';
+  if(down)h+='<p class="fine">Reconnecting…</p>';
+  return h;
+}
+function scoreOf(){
+  if(st.scores&&st.scores[me.no]!=null)return st.scores[me.no];
+  return me.score||0;
+}
+function render(){
+  if(!st&&me)return;
+  var k=me?[me.no,st.t,st.i,TV.phase(st),myAns(st.i),st.winner?st.winner.no:0,note,down].join('|'):'join';
+  if(k!==key){key=k;app.innerHTML=view();}
+  if(!me){var pl=document.getElementById('prizeline');if(pl&&st)pl.textContent="Tonight's prize: "+st.prize+'.';}
+  var bar=document.getElementById('pbar');
+  if(bar&&st&&st.t==='q')bar.style.width=Math.max(0,Math.min(100,100*(st.deadline-TV.now())/st.qms))+'%';
+}
+
+function poll(){
+  TV.api('state').then(function(s){
+    st=s;down=false;
+    if(me&&me.game!==s.id){me=null;TV.store.del('tv_me');note='';}
+    if(me&&s.t==='r'&&s.results&&s.results[me.no]){me.score=s.results[me.no][1];TV.store.set('tv_me',me);}
+    if(s.t!=='q')note='';
+    render();
+  }).catch(function(){down=true;render();}).then(function(){
+    clearTimeout(timer);
+    var wait=document.hidden?8000:(!st||st.t==='lobby'||st.t==='winner')?4000:2000;
+    timer=setTimeout(poll,wait);
+  });
+}
+
+app.addEventListener('submit',function(e){
+  e.preventDefault();if(busy)return;
+  var g=function(id){return document.getElementById(id);};
+  var name=g('fname').value.trim(),phone=g('fphone').value.trim(),email=g('femail').value.trim(),ig=g('fig').value.trim();
+  var digits=phone.replace(/\D/g,''),bad=null,msg='';
+  if(!name){bad='fname';msg='Add your first name so we can put you on the screen.';}
+  else if(digits.length<10||digits.length>11){bad='fphone';msg='Enter a 10-digit mobile number, like 416 555 0123.';}
+  else if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){bad='femail';msg='Enter a full email address, like you@email.com.';}
+  ['fname','fphone','femail'].forEach(function(id){g(id).setAttribute('aria-invalid',id===bad?'true':'false');});
+  g('ferr').textContent=msg;
+  if(bad){g(bad).focus();return;}
+  var opt=g('fopt')?g('fopt').checked:false;
+  busy=true;g('fgo').disabled=true;g('fgo').textContent='Joining…';
+  TV.api('join',{name:name,phone:phone,email:email,ig:ig,optin:opt,website:g('website').value}).then(function(r){
+    busy=false;
+    if(!r.pid){g('fgo').disabled=false;g('fgo').textContent='Join the game';return;}
+    saved={name:name,phone:phone,email:email,ig:ig,opted:saved.opted===true||opt};
+    TV.store.set('tv_details',saved);
+    me={pid:r.pid,no:r.no,name:r.name,game:r.game,ans:{},score:0};
+    TV.store.set('tv_me',me);
+    key='';
+    if(st&&st.id===r.game)render();
+    clearTimeout(timer);poll();
+  }).catch(function(err){
+    busy=false;
+    var b=g('fgo');if(b){b.disabled=false;b.textContent='Join the game';}
+    var e2=g('ferr');if(e2)e2.textContent=err.message;
+  });
+});
+app.addEventListener('click',function(e){
+  var b=e.target.closest('button[data-k]');
+  if(!b||!me||!st||st.t!=='q'||myAns(st.i)!=null||TV.phase(st)!=='open')return;
+  var k=+b.getAttribute('data-k'),qi=st.i;
+  me.ans[qi]=k;TV.store.set('tv_me',me);note='';render();
+  TV.api('answer',{pid:me.pid,game:me.game,choice:k}).catch(function(err){
+    if(err.status===403){me=null;TV.store.del('tv_me');key='';render();return;}
+    if(err.status===409){note=err.message;}
+    else{delete me.ans[qi];TV.store.set('tv_me',me);note='That didn\'t send. Tap your answer again.';}
+    render();
+  });
+});
+document.addEventListener('visibilitychange',function(){if(!document.hidden){clearTimeout(timer);poll();}});
+setInterval(render,250);
+if(!me)render();
+poll();
+})();
+</script>
+</body>
+</html>

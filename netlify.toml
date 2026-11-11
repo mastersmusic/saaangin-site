@@ -1,6 +1,12 @@
-# Static one-page site — nothing to build, publish the repo root.
+# The site is static pages plus one function (the trivia game).
+# The build copies the pages into dist/ so installed packages are never published.
 [build]
-  publish = "."
+  command = "rm -rf dist && mkdir dist && cp -r *.html *.css *.js *.mp4 *.jpg vendor dist/"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 [[headers]]
   for = "/hero.mp4"
@@ -11,3 +17,9 @@
   for = "/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/trivia-host*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    Cache-Control = "no-store"

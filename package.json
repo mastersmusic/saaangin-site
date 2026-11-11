@@ -1,0 +1,8 @@
+{
+  "name": "saaangin-site",
+  "private": true,
+  "description": "saaangin.com: the site plus the trivia game (Netlify function + Netlify Blobs).",
+  "dependencies": {
+    "@netlify/blobs": "^10.7.8"
+  }
+}
