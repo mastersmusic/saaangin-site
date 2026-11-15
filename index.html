@@ -72,6 +72,8 @@ img{max-width:100%;display:block}
 .hero__genres i{font-style:normal;color:var(--mango);margin:0 .35em}
 .hero__when{margin:0 0 1rem;font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,3vw,2.4rem);line-height:1.05;letter-spacing:-.02em}
 .hero__when small{display:block;font-family:var(--body);font-weight:700;font-size:1rem;letter-spacing:0;margin-top:.5rem;color:var(--white);opacity:.85}
+.hero__note{margin:-.3rem 0 1rem;font-weight:800;font-size:1rem;color:var(--mango)}
+.hero__note[hidden]{display:none}
 .count{list-style:none;margin:0 0 1.4rem;padding:0;display:flex;flex-wrap:wrap;gap:.9rem 1.3rem}
 .count b{min-width:1.6em}
 @media(max-width:700px){.count{gap:.8rem 1.1rem}}
@@ -294,7 +296,7 @@ img{max-width:100%;display:block}
   <div class="hero__scrim" aria-hidden="true"></div>
   <div class="hero__inner">
     <div class="hero__left">
-      <p class="data-label hero__cadence">Private karaoke · Every Tuesday · Invite only</p>
+      <p class="data-label hero__cadence" id="heroCadence">Private karaoke · Every Tuesday · Invite only</p>
       <p class="hero__tag">Toronto's premier invite-only karaoke night.</p>
       <h1 class="sr-only">SAAANGIN'</h1>
       <p class="hero__genres"><em>R&amp;B</em><i>//</i><em>Hip hop</em><i>//</i><em>90s pop</em><i>//</i><em>You sing every word</em></p>
@@ -302,8 +304,9 @@ img{max-width:100%;display:block}
     <div class="hero__right">
       <p class="hero__when">
         <span id="heroDate">Tuesday</span>
-        <small><span id="heroVenue">Rêve Lounge</span> · 456 Richmond St W · Doors <span id="heroDoors">9PM</span></small>
+        <small><span id="heroVenue">Rêve Lounge</span> · <span id="heroAddr">456 Richmond St W</span> · Doors <span id="heroDoors">9PM</span></small>
       </p>
+      <p class="hero__note" id="heroNote" hidden></p>
       <ul class="count" id="countdown" aria-label="Countdown to the next night">
         <li><b id="cdD">0</b><span>days</span></li>
         <li><b id="cdH">0</b><span>hrs</span></li>
@@ -335,17 +338,17 @@ img{max-width:100%;display:block}
       <h2 class="section-title" id="singTitle" style="color:var(--mango)">launch night</h2>
       <dl class="facts">
         <div><dt class="data-label">Date</dt><dd id="factDate">Tuesday</dd></div>
-        <div><dt class="data-label">Where</dt><dd>Rêve Lounge<small><a href="https://www.google.com/maps/search/?api=1&amp;query=R%C3%AAve%20Lounge%2C%20456%20Richmond%20St%20W%2C%20Toronto" target="_blank" rel="noopener">456 Richmond St W, Toronto</a> · opens in Google Maps</small></dd></div>
-        <div><dt class="data-label">Doors</dt><dd>9PM<small>First mic at 9:30 · last call 2AM</small></dd></div>
+        <div><dt class="data-label">Where</dt><dd id="factWhere">Rêve Lounge<small><a href="https://www.google.com/maps/search/?api=1&amp;query=R%C3%AAve%20Lounge%2C%20456%20Richmond%20St%20W%2C%20Toronto" target="_blank" rel="noopener">456 Richmond St W, Toronto</a> · opens in Google Maps</small></dd></div>
+        <div><dt class="data-label">Doors</dt><dd id="factDoors">9PM<small>First mic at 9:30 · last call 2AM</small></dd></div>
         <div><dt class="data-label">Host</dt><dd id="factHost">Your host for the night<small>Runs the queue, keeps the room loud</small></dd></div>
-        <div><dt class="data-label">Night</dt><dd id="factNo">Toronto / 001</dd></div>
+        <div id="factNoRow"><dt class="data-label">Night</dt><dd id="factNo">Toronto / 001</dd></div>
       </dl>
       <div class="now__actions">
         <a class="btn" href="#list">Request an invite</a>
         <a class="btn btn--ink" href="#card">Already a member?</a>
       
       </div>
-      <ul class="offer reveal">
+      <ul class="offer reveal" id="offer">
         <li class="is-pick"><p class="data-label">Recommended</p><b>Bottle service</b><small>The best way to do the night — your own table for the night. Reserve through the host.</small></li>
         <li><b>Hookah</b><small>Available at your table all night.</small></li>
         <li><b>Food</b><small>Full kitchen running while you wait your turn.</small></li>
@@ -430,7 +433,7 @@ img{max-width:100%;display:block}
 <section class="section band" id="list" aria-labelledby="listTitle">
   <div class="section__head reveal">
     <h2 class="section-title" id="listTitle">request an invite</h2>
-    <p class="lede">The room is small and it stays small. Leave your name and we'll let you know if there's space.</p>
+    <p class="lede" id="listLede">The room is small and it stays small. Leave your name and we'll let you know if there's space.</p>
   </div>
   <form class="signup reveal" id="signupForm" name="saaangin-list" method="POST" data-netlify="true" netlify-honeypot="company" novalidate>
     <input type="hidden" name="form-name" value="saaangin-list">
@@ -465,11 +468,11 @@ img{max-width:100%;display:block}
   <div class="footer__grid">
     <div>
       <h2>saaangin'</h2>
-      <p class="data-label" style="color:var(--grape)">Every Tuesday · Toronto · Invite only</p>
+      <p class="data-label" style="color:var(--grape)" id="footCadence">Every Tuesday · Toronto · Invite only</p>
     </div>
     <div>
       <p class="data-label" style="color:var(--mango);margin-bottom:.6rem">The room</p>
-      <p>Rêve Lounge<br><a href="https://www.google.com/maps/search/?api=1&amp;query=R%C3%AAve%20Lounge%2C%20456%20Richmond%20St%20W%2C%20Toronto" target="_blank" rel="noopener">456 Richmond St W, Toronto</a></p>
+      <p id="footRoom">Rêve Lounge<br><a href="https://www.google.com/maps/search/?api=1&amp;query=R%C3%AAve%20Lounge%2C%20456%20Richmond%20St%20W%2C%20Toronto" target="_blank" rel="noopener">456 Richmond St W, Toronto</a></p>
       <p class="data-label" style="color:var(--mango);margin-bottom:.6rem">Follow</p>
       <p><a href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">@wesaaangin</a></p>
       <p class="data-label" style="color:var(--mango);margin-bottom:.6rem">Contact</p>
@@ -504,7 +507,16 @@ img{max-width:100%;display:block}
     if(d<FIRST_NIGHT) d=new Date(FIRST_NIGHT);
     return d;
   }
-  var night=nextNight();
+  // One-off night away from the usual Tuesday at Rêve Lounge. Shown until it's over, then the
+  // site goes back to the weekly Tuesday on its own. Set SPECIAL to null to switch it off.
+  var SPECIAL = {
+    when: new Date(2026,10,30,20,0,0), // Mon Nov 30 2026, 8PM
+    venue: 'Soho House Toronto', addr: '192 Adelaide St W',
+    maps: 'https://www.google.com/maps/search/?api=1&query=Soho%20House%20Toronto%2C%20192%20Adelaide%20St%20W%2C%20Toronto',
+    doors: '8PM', hours: '8PM to 11PM', note: 'Spaces are very, very limited.'
+  };
+  var special = (SPECIAL && (new Date()-SPECIAL.when) < 4*3600*1000) ? SPECIAL : null;
+  var night = special ? special.when : nextNight();
   var weeks=Math.max(0,Math.round((night-FIRST_NIGHT)/(7*24*3600*1000)));
   var no='Toronto / '+String(weeks+1).padStart(3,'0');
   var fmt=night.toLocaleDateString('en-CA',{weekday:'long',month:'long',day:'numeric'});
@@ -512,7 +524,20 @@ img{max-width:100%;display:block}
   ['flyerNo','factNo'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=no;});
   // Before the first night it's the launch; after that, it's just this week's night.
   var st=document.getElementById('singTitle');
-  if(st) st.textContent = (night.getTime()===FIRST_NIGHT.getTime()) ? 'launch night' : 'this week';
+  if(st) st.textContent = special ? 'next night' : (night.getTime()===FIRST_NIGHT.getTime()) ? 'launch night' : 'this week';
+  if(special){
+    var $=function(id){return document.getElementById(id);};
+    var link='<a href="'+special.maps+'" target="_blank" rel="noopener">'+special.addr+', Toronto</a>';
+    $('heroCadence').textContent='Private karaoke · Invite only';
+    $('heroVenue').textContent=special.venue; $('heroAddr').textContent=special.addr; $('heroDoors').textContent=special.doors;
+    $('heroNote').textContent=special.note; $('heroNote').hidden=false;
+    $('factWhere').innerHTML=special.venue+'<small>'+link+' · opens in Google Maps</small>';
+    $('factDoors').innerHTML=special.doors+'<small>'+special.hours+' · '+special.note+'</small>';
+    $('factNoRow').style.display='none'; $('offer').style.display='none';
+    $('listLede').textContent=special.note+" Leave your name and we'll let you know if there's space.";
+    $('footCadence').textContent='Toronto · Invite only';
+    $('footRoom').innerHTML=special.venue+'<br>'+link;
+  }
   function tick(){
     var ms=Math.max(0,night-new Date());
     var s=Math.floor(ms/1000), m=Math.floor(s/60), h=Math.floor(m/60), d=Math.floor(h/24);
