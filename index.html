@@ -250,6 +250,13 @@ img{max-width:100%;display:block}
 .signup__field--wide{flex:1 1 100%}
 .signup input{width:100%;min-height:48px;border-radius:999px;border:2px solid color-mix(in srgb,var(--white) 25%,transparent);background:var(--ink-2);color:var(--white);padding:.8rem 1.2rem;font:inherit;font-weight:700}
 .hp{position:absolute;left:-9999px}
+.sent{max-width:620px;margin:0 auto 0 max(0px,calc((100% - 1180px)/2));box-sizing:border-box;display:flex;gap:1.1rem;align-items:flex-start;background:var(--ink);color:var(--white);border:3px solid var(--mango);border-radius:22px;padding:1.5rem 1.6rem;outline:none}
+.sent[hidden]{display:none}
+.sent__tick{flex:none;width:52px;height:52px;border-radius:999px;background:var(--mango);color:var(--ink);display:grid;place-items:center}
+.sent__tick svg{width:28px;height:28px}
+.sent h3{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,4vw,2.1rem);line-height:1;margin:.15rem 0 .6rem;color:var(--mango)}
+.sent p{margin:0 0 .5rem;font-weight:700}
+.sent button{background:none;border:0;padding:0;margin-top:.3rem;font:inherit;font-weight:800;color:var(--white);text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:44px}
 .form-msg{min-height:1.4em;margin:.8rem 0 0;font-weight:800;color:var(--mango)}
 .fineprint{font-size:.9rem;color:color-mix(in srgb,var(--white) 65%,var(--grape));margin:.4rem 0 0;max-width:40em}
 .copyrow{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:1.4rem}
@@ -452,6 +459,15 @@ img{max-width:100%;display:block}
     <div class="hp" aria-hidden="true"><label for="company">Company</label><input type="text" id="company" name="company" tabindex="-1" autocomplete="off"></div>
     <button class="btn" type="submit" id="signupBtn">Request an invite</button>
   </form>
+  <div class="sent" id="sentBox" role="status" tabindex="-1" hidden>
+    <span class="sent__tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+    <div>
+      <h3>Request sent.</h3>
+      <p id="sentLine">We've got your request.</p>
+      <p>Every name is read by a person. If there's room, we'll email you.</p>
+      <button type="button" id="sentAgain">Request for someone else</button>
+    </div>
+  </div>
   <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
   <p class="fineprint">Requesting isn't the same as being on the list — every name is read by a person. We only email about the night, and you can leave any time.</p>
   <div class="copyrow">
@@ -567,11 +583,19 @@ img{max-width:100%;display:block}
       body:new URLSearchParams(new FormData(form)).toString()
     }).then(function(r){
       if(!r.ok) throw new Error(r.status);
-      msg.textContent='Request in. Every name is read by a person — if there’s room, we’ll email you.';
-      form.reset();
+      var first=nameEl.value.trim().split(/\s+/)[0], sent=document.getElementById('sentBox');
+      document.getElementById('sentLine').textContent='Thanks, '+first+'. We’ve got your request for '+fmt+', and we’ll reply to '+email.value.trim()+'.';
+      msg.textContent='';
+      form.reset(); form.hidden=true; form.style.display='none';
+      sent.hidden=false; sent.scrollIntoView({block:'center',behavior:'smooth'}); sent.focus({preventScroll:true});
     }).catch(function(){
       msg.textContent='That didn’t send — DM @wesaaangin and we’ll add you by hand.';
     }).then(function(){ btn.disabled=false; });
+  });
+
+  document.getElementById('sentAgain').addEventListener('click',function(){
+    document.getElementById('sentBox').hidden=true; form.hidden=false; form.style.display='';
+    document.getElementById('fullname').focus();
   });
 
   // Copy handle
