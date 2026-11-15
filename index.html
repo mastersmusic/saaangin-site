@@ -260,7 +260,7 @@ img{max-width:100%;display:block}
 .form-msg{min-height:1.4em;margin:.8rem 0 0;font-weight:800;color:var(--mango)}
 .fineprint{font-size:.9rem;color:color-mix(in srgb,var(--white) 65%,var(--grape));margin:.4rem 0 0;max-width:40em}
 .copyrow{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:1.4rem}
-.copyrow code{font-family:var(--body);font-weight:800;background:var(--ink-2);padding:.5rem .9rem;border-radius:999px}
+.copyrow .handle{font-family:var(--body);font-weight:800;background:var(--ink-2);color:var(--white);padding:.5rem .9rem;border-radius:999px;text-decoration:underline;text-underline-offset:3px;min-height:40px;display:inline-flex;align-items:center}
 
 /* footer */
 .footer{background:var(--ink);border-top:1px solid color-mix(in srgb,var(--white) 12%,transparent);padding-block:3.5rem 2rem;padding-left:var(--edge);padding-right:var(--edge-r)}
@@ -472,7 +472,7 @@ img{max-width:100%;display:block}
   <p class="fineprint">Requesting isn't the same as being on the list — every name is read by a person. We only email about the night, and you can leave any time.</p>
   <div class="copyrow">
     <span class="data-label" style="color:var(--mango)">Or DM</span>
-    <code id="handle">@wesaaangin</code>
+    <a id="handle" class="handle" href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">@wesaaangin</a>
     <button class="btn btn--ink" type="button" id="copyHandle" style="min-height:40px;padding:.5rem 1rem">Copy handle</button>
   </div>
 </section>
@@ -492,7 +492,7 @@ img{max-width:100%;display:block}
       <p class="data-label" style="color:var(--mango);margin-bottom:.6rem">Follow</p>
       <p><a href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">@wesaaangin</a></p>
       <p class="data-label" style="color:var(--mango);margin-bottom:.6rem">Contact</p>
-      <p><a href="mailto:info@saaangin.com">info@saaangin.com</a><br>or DM @wesaaangin on Instagram</p>
+      <p><a href="mailto:info@saaangin.com">info@saaangin.com</a><br>or DM <a href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener">@wesaaangin</a> on Instagram</p>
     </div>
     <div>
       <p class="data-label" style="color:var(--mango);margin-bottom:.6rem">Powered by</p>
@@ -589,7 +589,7 @@ img{max-width:100%;display:block}
       form.reset(); form.hidden=true; form.style.display='none';
       sent.hidden=false; sent.scrollIntoView({block:'center',behavior:'smooth'}); sent.focus({preventScroll:true});
     }).catch(function(){
-      msg.textContent='That didn’t send — DM @wesaaangin and we’ll add you by hand.';
+      msg.innerHTML='That didn’t send — DM <a href="https://www.instagram.com/wesaaangin" target="_blank" rel="noopener" style="color:inherit">@wesaaangin</a> and we’ll add you by hand.';
     }).then(function(){ btn.disabled=false; });
   });
 
